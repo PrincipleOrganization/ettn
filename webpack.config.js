@@ -1,4 +1,5 @@
 const nodeExternals = require('webpack-node-externals');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = [
@@ -26,24 +27,32 @@ module.exports = [
   },
   {
     name: 'client',
-    target: 'node',
-    externals: [nodeExternals()],
     entry: {
-      index: './src/client/index.js',
+      javascript: './src/client/index.js',
     },
     output: {
       path: path.join(__dirname, 'dist'),
       filename: 'client.bundle.js',
-      libraryTarget: 'commonjs2',
     },
     module: {
       rules: [
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: 'babel-loader',
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  ['react'],
+                  ['es2015', { modules: false }],
+                ],
+              },
+            },
+          ],
         },
       ],
     },
+    plugins: [new HtmlWebpackPlugin()],
   },
 ];
