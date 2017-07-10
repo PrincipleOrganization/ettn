@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import compression from 'compression';
 import passport from 'passport';
+import cors from 'cors';
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
@@ -19,6 +20,7 @@ export default (app) => {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(passport.initialize());
   app.set('view engine', 'html');
+  app.use(cors());
 
   let staticPath = './dist';
   if (isProd) {

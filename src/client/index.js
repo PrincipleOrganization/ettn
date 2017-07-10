@@ -4,13 +4,14 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
-const element = document.createElement('div');
-element.id = 'app';
-document.body.prepend(element);
+import store from './store';
+
+import { Base } from './containers';
 
 ReactDOM.render(
-  <div>
-    Hello wordl!
-  </div>,
+  <Provider store={store}>
+    <Base />
+  </Provider>,
   document.getElementById('app'));
