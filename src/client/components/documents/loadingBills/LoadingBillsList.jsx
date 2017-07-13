@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import moment from 'moment';
 
 import { catalogs } from '../../../utils';
+import { CSS_TABLE_CLASS, CSS_OBJECT_HEADER } from '../../../constants';
+
+import { fetchUsers } from '../../../actions/users';
+import { fetchLoadingBills, deleteLoadingBill } from '../../../actions/loadingBills';
+import { fetchPoints } from '../../../actions/points';
+import { fetchClients } from '../../../actions/clients';
+import { fetchDrivers } from '../../../actions/drivers';
+import { fetchVehicles } from '../../../actions/vehicles';
+import { fetchNomenclature } from '../../../actions/nomenclature';
 
 const formatDate = date => (
   moment(date).format('D/M/YYYY H:m:s')
@@ -29,7 +39,22 @@ class LoadingBillsList extends Component {
       activeRow: '',
     };
 
-    this.handleClick = this.handleClick.bind(this);
+    this.refresh = this.refresh.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+  }
+
+  componentDidMount() {
+    this.refresh();
+  }
+
+  refresh() {
+    this.props.fetchUsers();
+    this.props.fetchDrivers();
+    this.props.fetchPoints();
+    this.props.fetchClients();
+    this.props.fetchVehicles();
+    this.props.fetchNomenclature();
+    this.props.fetchLoadingBills();
   }
 
   handleClick(activeRow) {
@@ -37,8 +62,17 @@ class LoadingBillsList extends Component {
   }
 
   handleDoubleClick(id) {
-    console.log(id);
+    // this.props.history.push('/mypath');
   }
+
+  handleDelete() {
+    const { activeRow } = this.state;
+    if (activeRow) {
+      this.props.deleteLoadingBill(activeRow);
+      this.setState({ activeRow: '' });
+    }
+  }
+
 
   render() {
     const loadingBillsIsFetched = this.props.loadingBills.isFetched;
@@ -64,9 +98,9 @@ class LoadingBillsList extends Component {
           key={item.id}
           className={this.state.activeRow === item.id ? 'active' : ''}
           onClick={() => this.handleClick(item.id)}
-          onDoubleClick={() => this.handleDoubleClick(item.id)}
+          // onDoubleClick={() => this.handleDoubleClick(item.id)}
         >
-          <td>{item.number.toString()}</td>
+          <td>{item.number}</td>
           <td>{ formatDate(item.createdAt) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.drivers.data, item.driver) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.vehicles.data, item.vehicle) }</td>
@@ -76,9 +110,9 @@ class LoadingBillsList extends Component {
           <td>{ catalogs.getCatalogNameById(this.props.clients.data, item.customer) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.clients.data, item.recipient) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.points.data, item.shippingPoint) }</td>
-          <td>{item.gross.toString()}</td>
-          <td>{item.tara.toString()}</td>
-          <td>{item.net.toString()}</td>
+          <td>{item.gross}</td>
+          <td>{item.tara}</td>
+          <td>{item.net}</td>
           <td>{ generateGoodsString(this.props.nomenclature.data, item.goods) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.users.data, item.author) }</td>
         </tr>
@@ -86,12 +120,37 @@ class LoadingBillsList extends Component {
 
       elementToRender = (
         <div>
-          <h4>Товарно-транспортні накладні</h4>
+          <p className={CSS_OBJECT_HEADER}>Товарно-транспортні накладні</p>
 
-          <table className="table table-hover table-bordered table-responsive">
+          <div className="btn-toolbar object-toolbar" role="toolbar">
+            <div className="btn-group btn-group-sm" role="group">
+              <button
+                type="button"
+                className="btn btn-primary"
+              >
+                Створити
+              </button>
+              <button
+                type="button"
+                className="btn btn-default"
+                onClick={this.refresh}
+              >
+                Оновити
+              </button>
+              <button
+                type="button"
+                className={`btn btn-default ${this.state.activeRow ? '' : 'disabled'}`}
+                onClick={this.handleDelete}
+              >
+                Видалити
+              </button>
+            </div>
+          </div>
+
+          <table className={CSS_TABLE_CLASS}>
             <thead>
               <tr>
-                <th>Номер</th>
+                <th>#</th>
                 <th>Дата</th>
                 <th>Водій</th>
                 <th>Транспортний Засіб</th>
@@ -158,6 +217,32 @@ LoadingBillsList.propTypes = {
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
+
+  fetchUsers: PropTypes.func.isRequired,
+  fetchDrivers: PropTypes.func.isRequired,
+  fetchPoints: PropTypes.func.isRequired,
+  fetchClients: PropTypes.func.isRequired,
+  fetchVehicles: PropTypes.func.isRequired,
+  fetchNomenclature: PropTypes.func.isRequired,
+  fetchLoadingBills: PropTypes.func.isRequired,
+  deleteLoadingBill: PropTypes.func.isRequired,
 };
 
-export default LoadingBillsList;
+export default connect(state => ({
+  users: state.users,
+  loadingBills: state.loadingBills,
+  drivers: state.drivers,
+  points: state.points,
+  clients: state.clients,
+  vehicles: state.vehicles,
+  nomenclature: state.nomenclature,
+}), {
+  fetchUsers,
+  fetchDrivers,
+  fetchPoints,
+  fetchClients,
+  fetchVehicles,
+  fetchNomenclature,
+  fetchLoadingBills,
+  deleteLoadingBill,
+})(LoadingBillsList);

@@ -96,7 +96,7 @@ export default class LoadingBill {
       messages.push('No such loading bill with this id');
     }
     return {
-      secusses: db.get(TABLE).remove({ id }).write().length === 1,
+      success: db.get(TABLE).remove({ id }).write().length === 1,
       messages,
     };
   }

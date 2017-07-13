@@ -32,6 +32,14 @@ export default class Vehicle {
     return db.get(TABLE).find({ id });
   }
 
+  static getVehicle(id) {
+    const vehicle = Vehicle.findById(id).value();
+    if (vehicle) {
+      return { vehicle, messages: [] };
+    }
+    return { vehicle: {}, messages: ['No such vehicle with this id'] };
+  }
+
   static createVehicle(args) {
     db.read();
 
@@ -73,7 +81,7 @@ export default class Vehicle {
       messages.push('No such vehicle with this id');
     }
     return {
-      secusses: db.get(TABLE).remove({ id }).write().length === 1,
+      success: db.get(TABLE).remove({ id }).write().length === 1,
       messages,
     };
   }

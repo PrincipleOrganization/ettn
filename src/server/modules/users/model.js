@@ -83,7 +83,7 @@ export default class User {
       messages.push('No such user with this id');
     }
     return {
-      secusses: db.get(TABLE).remove({ id }).write().length === 1,
+      success: db.get(TABLE).remove({ id }).write().length === 1,
       messages,
     };
   }

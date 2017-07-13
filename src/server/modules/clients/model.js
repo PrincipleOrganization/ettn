@@ -26,6 +26,14 @@ export default class Client {
     return db.get(TABLE).find({ id });
   }
 
+  static getClient(id) {
+    const client = Client.findById(id).value();
+    if (client) {
+      return { client, messages: [] };
+    }
+    return { client: {}, messages: ['No such client with this id'] };
+  }
+
   static createClient(args) {
     db.read();
 
@@ -67,7 +75,7 @@ export default class Client {
       messages.push('No such client with this id');
     }
     return {
-      secusses: db.get(TABLE).remove({ id }).write().length === 1,
+      success: db.get(TABLE).remove({ id }).write().length === 1,
       messages,
     };
   }

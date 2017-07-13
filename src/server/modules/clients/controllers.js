@@ -8,6 +8,14 @@ export const all = (req, res) => {
   }
 };
 
+export const one = (req, res) => {
+  try {
+    res.status(200).json(Client.getClient(req.params.id));
+  } catch (e) {
+    res.status(400).json(e.toString());
+  }
+};
+
 export const create = (req, res) => {
   try {
     res.status(201).json(Client.createClient(req.body));

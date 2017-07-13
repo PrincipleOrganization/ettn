@@ -25,6 +25,14 @@ export default class Point {
     return db.get(TABLE).find({ id });
   }
 
+  static getPoint(id) {
+    const point = Point.findById(id).value();
+    if (point) {
+      return { point, messages: [] };
+    }
+    return { point: {}, messages: ['No such point with this id'] };
+  }
+
   static createPoint(args) {
     db.read();
 
@@ -66,7 +74,7 @@ export default class Point {
       messages.push('No such point with this id');
     }
     return {
-      secusses: db.get(TABLE).remove({ id }).write().length === 1,
+      success: db.get(TABLE).remove({ id }).write().length === 1,
       messages,
     };
   }

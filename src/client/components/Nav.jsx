@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { NavLink, Link } from 'react-router-dom';
 
-const handleLogout = (e, logout) => {
+import { logout } from '../actions/users';
+
+const handleLogout = (e, logoutFunc) => {
   e.preventDefault();
-  logout();
+  logoutFunc();
 };
 
-const Nav = props => (
+const Nav = ({ user, logout: logoutFunc }) => (
   <nav className="navbar navbar-default navbar-fixed-top">
     <div className="container-fluid">
 
@@ -16,7 +20,7 @@ const Nav = props => (
 
       <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul className="nav navbar-nav">
-          <li><a>Документи</a></li>
+          <li><NavLink to="/loadingBills">Документи</NavLink></li>
           <li className="dropdown">
             <a
               className="dropdown-toggle"
@@ -29,17 +33,16 @@ const Nav = props => (
               <span className="caret" />
             </a>
             <ul className="dropdown-menu">
-              <li><a>Водії</a></li>
-              <li><a >Транспортні засоби</a></li>
-              <li><a>Контрагенти</a></li>
-              <li><a>Пункти</a></li>
-              <li><a>Номенклатура</a></li>
+              <li><NavLink to="/drivers">Водії</NavLink></li>
+              <li><NavLink to="/vehicles">Транспортні засоби</NavLink></li>
+              <li><NavLink to="/clients">Контрагенти</NavLink></li>
+              <li><NavLink to="/points">Пункти</NavLink></li>
+              <li><NavLink to="/nomenclature">Номенклатура</NavLink></li>
             </ul>
           </li>
         </ul>
 
         <ul className="nav navbar-nav navbar-right">
-          <li><button className="btn" onClick={props.refresh}>Оновити</button></li>
           <li className="dropdown">
             <a
               className="dropdown-toggle"
@@ -48,14 +51,17 @@ const Nav = props => (
               aria-haspopup="true"
               aria-expanded="false"
             >
-              { props.user.name }
+              {user.name}
               <span className="caret" />
             </a>
             <ul className="dropdown-menu">
               <li>
-                <a onClick={e => handleLogout(e, props.logout)}>
+                <a>Налаштування</a>
+              </li>
+              <li>
+                <Link to="/login" onClick={e => handleLogout(e, logoutFunc)}>
                   Вийти
-                </a>
+                </Link>
               </li>
             </ul>
           </li>
@@ -67,11 +73,12 @@ const Nav = props => (
 );
 
 Nav.propTypes = {
-  refresh: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   user: PropTypes.shape({
     name: PropTypes.string.isRequired,
   }).isRequired,
 };
 
-export default Nav;
+export default connect(state => ({
+  user: state.users.user,
+}), { logout })(Nav);

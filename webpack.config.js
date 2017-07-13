@@ -79,13 +79,20 @@ module.exports = [
           ],
         },
         {
-          test: /\.(woff2?|svg)$/,
-          loader: 'url-loader?limit=10000&name=fonts/[name].[ext]',
+          test: /\.(jpe?g|png|gif|svg)$/i,
+          use: [
+            'file-loader?name=images/[name].[ext]',
+          ],
         },
+        // {
+        //   test: /\.(woff|woff2|eot|ttf)$/i,
+        //   loader: "file-loader?name=fonts/[name]-[hash].[ext]"
+        // },
         {
-          test: /\.(ttf|eot)$/,
-          loader: 'file-loader?name=fonts/[name].[ext]',
+          test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          use: 'url-loader?limit=10000&name=fonts/[name].[ext]&mimetype=application/font-woff',
         },
+        { test: /\.(ttf|eot)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'file-loader?name=fonts/[name]-[hash].[ext]' },
         {
           test: /bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/,
           loader: 'imports-loader?jQuery=jquery',

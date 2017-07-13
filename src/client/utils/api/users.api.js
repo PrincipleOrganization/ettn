@@ -16,7 +16,6 @@ class UsersApi {
     const { data } = await axios({
       method: 'get',
       url: this.path,
-      headers: { authorization: Auth.getToken() },
     });
     return data;
   }

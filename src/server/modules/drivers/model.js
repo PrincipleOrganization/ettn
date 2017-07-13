@@ -25,6 +25,14 @@ export default class Driver {
     return db.get(TABLE).find({ id });
   }
 
+  static getDriver(id) {
+    const driver = Driver.findById(id).value();
+    if (driver) {
+      return { driver, messages: [] };
+    }
+    return { driver: {}, messages: ['No such driver with this id'] };
+  }
+
   static createDriver(args) {
     db.read();
 
@@ -66,7 +74,7 @@ export default class Driver {
       messages.push('No such driver with this id');
     }
     return {
-      secusses: db.get(TABLE).remove({ id }).write().length === 1,
+      success: db.get(TABLE).remove({ id }).write().length === 1,
       messages,
     };
   }

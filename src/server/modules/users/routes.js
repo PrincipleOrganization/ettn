@@ -5,7 +5,7 @@ import { authLocal, authJwt } from '../../services/auth.service';
 
 const router = new Router();
 
-router.get('/', authJwt, all);
+router.get('/', all);
 router.post('/', authJwt, create);
 router.put('/:id', authJwt, change);
 router.delete('/:id', authJwt, remove);

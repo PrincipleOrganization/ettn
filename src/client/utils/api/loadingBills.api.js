@@ -20,6 +20,15 @@ class LoadingBillsApi {
     const { data } = await axios.post(this.path, payload);
     return data;
   }
+
+  async deleteLoadingBill(id) {
+    const { data } = await await axios({
+      method: 'delete',
+      url: `${this.path}/${id}`,
+      headers: { authorization: Auth.getToken() },
+    });
+    return data;
+  }
 }
 
 export default new LoadingBillsApi();

@@ -23,10 +23,10 @@ class Auth {
 
   getUser() {
     return {
-      name: localStorage.getItem(this.userNameKey),
-      id: localStorage.getItem(this.userIdKey),
-      role: localStorage.getItem(this.userRoleKey),
-      slug: localStorage.getItem(this.userSlugKey),
+      name: localStorage.getItem(this.userNameKey) || '',
+      id: localStorage.getItem(this.userIdKey) || '',
+      role: localStorage.getItem(this.userRoleKey) || '',
+      slug: localStorage.getItem(this.userSlugKey) || '',
     };
   }
 
@@ -40,7 +40,10 @@ class Auth {
 
   unauthUser() {
     localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
+    localStorage.removeItem(this.userNameKey);
+    localStorage.removeItem(this.userIdKey);
+    localStorage.removeItem(this.userRoleKey);
+    localStorage.removeItem(this.userSlugKey);
   }
 }
 

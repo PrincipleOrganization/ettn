@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+import { login, fetchUsers } from '../actions/users';
 
 class Login extends Component {
   constructor(props) {
@@ -12,6 +15,10 @@ class Login extends Component {
 
     this.authorizeUser = this.authorizeUser.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.fetchUsers();
   }
 
   authorizeUser(e) {
@@ -30,6 +37,14 @@ class Login extends Component {
   }
 
   render() {
+    const users = this.props.users.data;
+    const usersToSelect = users.map(user => (
+      <option key={user.id} value={user.name} >{ user.name }</option>
+    ));
+    usersToSelect.unshift(<option key={''} disabled value={''}>Вкажіть користувача</option>);
+
+    const user = this.state.user;
+
     return (
       <div className="login-page">
         <h2>еТТН</h2>
@@ -37,14 +52,15 @@ class Login extends Component {
         <form onSubmit={this.authorizeUser}>
           <div className="form-group">
             <label htmlFor="user">Користувач</label>
-            <input
-              type="text"
+            <select
               className="form-control"
               id="user"
-              placeholder="Користувач"
               name="user"
               onChange={this.handleInputChange}
-            />
+              value={user}
+            >
+              { usersToSelect }
+            </select>
           </div>
           <div className="form-group">
             <label htmlFor="password">Пароль</label>
@@ -67,6 +83,14 @@ class Login extends Component {
 
 Login.propTypes = {
   login: PropTypes.func.isRequired,
+  users: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    isFetched: PropTypes.bool.isRequired,
+  }).isRequired,
+
+  fetchUsers: PropTypes.func.isRequired,
 };
 
-export default Login;
+export default connect(state => ({
+  users: state.users,
+}), { login, fetchUsers })(Login);

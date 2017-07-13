@@ -25,6 +25,14 @@ export default class Nomenclature {
     return db.get(TABLE).find({ id });
   }
 
+  static getOneNomenclature(id) {
+    const nomenclature = Nomenclature.findById(id).value();
+    if (nomenclature) {
+      return { nomenclature, messages: [] };
+    }
+    return { nomenclature: {}, messages: ['No such nomenclature with this id'] };
+  }
+
   static createNomenclature(args) {
     db.read();
 
@@ -66,7 +74,7 @@ export default class Nomenclature {
       messages.push('No such nomenclature with this id');
     }
     return {
-      secusses: db.get(TABLE).remove({ id }).write().length === 1,
+      success: db.get(TABLE).remove({ id }).write().length === 1,
       messages,
     };
   }

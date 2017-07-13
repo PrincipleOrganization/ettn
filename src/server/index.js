@@ -17,7 +17,7 @@ if (isProd) {
   indexHtmlFile = 'index.html';
 }
 
-app.get('/', (req, res) => {
+app.use('/*', (req, res) => {
   res.sendFile(path.resolve(indexHtmlFile));
 });
 
