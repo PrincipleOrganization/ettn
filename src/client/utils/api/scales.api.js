@@ -2,12 +2,12 @@ import axios from 'axios';
 
 import Auth from '../auth';
 
-class LoadingBillsApi {
+class ScalesApi {
   constructor() {
-    this.path = '/loadingBill';
+    this.path = '/scale';
   }
 
-  async fetchLoadingBills() {
+  async fetchScales() {
     const { data } = await axios({
       method: 'get',
       url: this.path,
@@ -16,7 +16,7 @@ class LoadingBillsApi {
     return data;
   }
 
-  async fetchLoadingBill(id) {
+  async fetchScale(id) {
     const { data } = await axios({
       method: 'get',
       url: `${this.path}/${id}`,
@@ -25,7 +25,7 @@ class LoadingBillsApi {
     return data;
   }
 
-  async createLoadingBill(payload) {
+  async createScale(payload) {
     const { data } = await await axios({
       method: 'post',
       url: `${this.path}`,
@@ -35,7 +35,7 @@ class LoadingBillsApi {
     return data;
   }
 
-  async changeLoadingBill(id, payload) {
+  async changeScale(id, payload) {
     const { data } = await await axios({
       method: 'put',
       url: `${this.path}/${id}`,
@@ -45,7 +45,7 @@ class LoadingBillsApi {
     return data;
   }
 
-  async deleteLoadingBill(id) {
+  async deleteScale(id) {
     const { data } = await await axios({
       method: 'delete',
       url: `${this.path}/${id}`,
@@ -55,4 +55,4 @@ class LoadingBillsApi {
   }
 }
 
-export default new LoadingBillsApi();
+export default new ScalesApi();

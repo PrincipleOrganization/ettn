@@ -26,6 +26,7 @@ db.defaults({
   clients: [],
   drivers: [],
   vehicles: [],
+  scales: [],
   loadingBills: [],
 }).write();
 

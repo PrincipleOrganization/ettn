@@ -27,6 +27,7 @@ export default class LoadingBill {
     this.sender = args.sender;
     this.recipient = args.recipient;
     this.shippingPoint = args.shippingPoint;
+    this.scale = args.scale;
     this.gross = args.gross || 0;
     this.tara = args.tara || 0;
     this.net = args.net || 0;
@@ -35,6 +36,7 @@ export default class LoadingBill {
     this.netDate = args.netDate || '';
     this.goods = args.goods;
     this.author = args.author;
+    this.comment = args.comment || '';
   }
 
   static getLoadingBills() {
@@ -45,6 +47,14 @@ export default class LoadingBill {
   static findById(id) {
     db.read();
     return db.get(TABLE).find({ id });
+  }
+
+  static getLoadingBill(id) {
+    const loadingBill = LoadingBill.findById(id).value();
+    if (loadingBill) {
+      return { loadingBill, messages: [] };
+    }
+    return { loadingBill: {}, messages: ['No such loading bill with this id'] };
   }
 
   static createLoadingBill(args) {
@@ -147,6 +157,9 @@ export default class LoadingBill {
     }
     if (!this.shippingPoint) {
       messages.push('Shipping point is required!');
+    }
+    if (!this.scale) {
+      messages.push('Scale is required!');
     }
     if (this.goods.length === 0) {
       messages.push('Goods is required!');

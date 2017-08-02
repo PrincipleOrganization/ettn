@@ -1,22 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
-import { catalogs } from '../../../utils';
+import { catalogs, format } from '../../../utils';
 import { CSS_TABLE_CLASS, CSS_OBJECT_HEADER } from '../../../constants';
 
 import { fetchUsers } from '../../../actions/users';
 import { fetchLoadingBills, deleteLoadingBill } from '../../../actions/loadingBills';
 import { fetchPoints } from '../../../actions/points';
-import { fetchClients } from '../../../actions/clients';
 import { fetchDrivers } from '../../../actions/drivers';
 import { fetchVehicles } from '../../../actions/vehicles';
+import { fetchScales } from '../../../actions/scales';
 import { fetchNomenclature } from '../../../actions/nomenclature';
-
-const formatDate = date => (
-  moment(date).format('D/M/YYYY H:m:s')
-);
 
 const generateGoodsString = (catalog, goods) => {
   let goodsString = '';
@@ -40,6 +35,7 @@ class LoadingBillsList extends Component {
     };
 
     this.refresh = this.refresh.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
   }
 
@@ -51,9 +47,9 @@ class LoadingBillsList extends Component {
     this.props.fetchUsers();
     this.props.fetchDrivers();
     this.props.fetchPoints();
-    this.props.fetchClients();
     this.props.fetchVehicles();
     this.props.fetchNomenclature();
+    this.props.fetchScales();
     this.props.fetchLoadingBills();
   }
 
@@ -62,7 +58,11 @@ class LoadingBillsList extends Component {
   }
 
   handleDoubleClick(id) {
-    // this.props.history.push('/mypath');
+    this.props.history.push(`/loadingBills/${id}`);
+  }
+
+  handleCreate() {
+    this.props.history.push('/loadingBills/new');
   }
 
   handleDelete() {
@@ -73,23 +73,22 @@ class LoadingBillsList extends Component {
     }
   }
 
-
   render() {
     const loadingBillsIsFetched = this.props.loadingBills.isFetched;
     const pointsIsFetched = this.props.points.isFetched;
-    const clientsIsFetched = this.props.clients.isFetched;
     const driversIsFetched = this.props.drivers.isFetched;
     const vehiclesIsFetched = this.props.vehicles.isFetched;
     const nomenclatureIsFetched = this.props.nomenclature.isFetched;
+    const scalesIsFetched = this.props.scales.isFetched;
     const usersIsFetched = this.props.users.isFetched;
 
     let elementToRender = 'Loading...';
     if (loadingBillsIsFetched &&
       pointsIsFetched &&
-      clientsIsFetched &&
       driversIsFetched &&
       vehiclesIsFetched &&
       nomenclatureIsFetched &&
+      scalesIsFetched &&
       usersIsFetched) {
       const data = this.props.loadingBills.data;
 
@@ -98,17 +97,13 @@ class LoadingBillsList extends Component {
           key={item.id}
           className={this.state.activeRow === item.id ? 'active' : ''}
           onClick={() => this.handleClick(item.id)}
-          // onDoubleClick={() => this.handleDoubleClick(item.id)}
+          onDoubleClick={() => this.handleDoubleClick(item.id)}
         >
           <td>{item.number}</td>
-          <td>{ formatDate(item.createdAt) }</td>
+          <td>{ format.formatDate(item.createdAt) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.drivers.data, item.driver) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.vehicles.data, item.vehicle) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.vehicles.data, item.trailer) }</td>
-          <td>{ catalogs.getCatalogNameById(this.props.clients.data, item.carrier) }</td>
-          <td>{ catalogs.getCatalogNameById(this.props.clients.data, item.sender) }</td>
-          <td>{ catalogs.getCatalogNameById(this.props.clients.data, item.customer) }</td>
-          <td>{ catalogs.getCatalogNameById(this.props.clients.data, item.recipient) }</td>
           <td>{ catalogs.getCatalogNameById(this.props.points.data, item.shippingPoint) }</td>
           <td>{item.gross}</td>
           <td>{item.tara}</td>
@@ -118,34 +113,39 @@ class LoadingBillsList extends Component {
         </tr>
       ));
 
+      const toolbar = (
+        <div className="btn-toolbar object-toolbar" role="toolbar">
+          <div className="btn-group btn-group-sm" role="group">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={this.handleCreate}
+            >
+              Створити
+            </button>
+            <button
+              type="button"
+              className="btn btn-default"
+              onClick={this.refresh}
+            >
+              Оновити
+            </button>
+            <button
+              type="button"
+              className={`btn btn-default ${this.state.activeRow ? '' : 'disabled'}`}
+              onClick={this.handleDelete}
+            >
+              Видалити
+            </button>
+          </div>
+        </div>
+      );
+
       elementToRender = (
         <div>
           <p className={CSS_OBJECT_HEADER}>Товарно-транспортні накладні</p>
 
-          <div className="btn-toolbar object-toolbar" role="toolbar">
-            <div className="btn-group btn-group-sm" role="group">
-              <button
-                type="button"
-                className="btn btn-primary"
-              >
-                Створити
-              </button>
-              <button
-                type="button"
-                className="btn btn-default"
-                onClick={this.refresh}
-              >
-                Оновити
-              </button>
-              <button
-                type="button"
-                className={`btn btn-default ${this.state.activeRow ? '' : 'disabled'}`}
-                onClick={this.handleDelete}
-              >
-                Видалити
-              </button>
-            </div>
-          </div>
+          {toolbar}
 
           <table className={CSS_TABLE_CLASS}>
             <thead>
@@ -155,10 +155,6 @@ class LoadingBillsList extends Component {
                 <th>Водій</th>
                 <th>Транспортний Засіб</th>
                 <th>Причеп</th>
-                <th>Перевізник</th>
-                <th>Замовник</th>
-                <th>Відправник</th>
-                <th>Отримувач</th>
                 <th>Пункт погрузки</th>
                 <th>Брутто</th>
                 <th>Тара</th>
@@ -183,6 +179,8 @@ class LoadingBillsList extends Component {
 }
 
 LoadingBillsList.propTypes = {
+  history: PropTypes.shape().isRequired,
+
   loadingBills: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     isFetched: PropTypes.bool.isRequired,
@@ -194,11 +192,6 @@ LoadingBillsList.propTypes = {
   }).isRequired,
 
   points: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    isFetched: PropTypes.bool.isRequired,
-  }).isRequired,
-
-  clients: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
@@ -218,11 +211,16 @@ LoadingBillsList.propTypes = {
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
 
+  scales: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    isFetched: PropTypes.bool.isRequired,
+  }).isRequired,
+
   fetchUsers: PropTypes.func.isRequired,
   fetchDrivers: PropTypes.func.isRequired,
   fetchPoints: PropTypes.func.isRequired,
-  fetchClients: PropTypes.func.isRequired,
   fetchVehicles: PropTypes.func.isRequired,
+  fetchScales: PropTypes.func.isRequired,
   fetchNomenclature: PropTypes.func.isRequired,
   fetchLoadingBills: PropTypes.func.isRequired,
   deleteLoadingBill: PropTypes.func.isRequired,
@@ -233,16 +231,16 @@ export default connect(state => ({
   loadingBills: state.loadingBills,
   drivers: state.drivers,
   points: state.points,
-  clients: state.clients,
   vehicles: state.vehicles,
+  scales: state.scales,
   nomenclature: state.nomenclature,
 }), {
   fetchUsers,
   fetchDrivers,
   fetchPoints,
-  fetchClients,
   fetchVehicles,
   fetchNomenclature,
+  fetchScales,
   fetchLoadingBills,
   deleteLoadingBill,
 })(LoadingBillsList);

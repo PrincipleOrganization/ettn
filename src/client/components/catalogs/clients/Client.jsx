@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { CSS_INPUT } from '../../../constants';
 import { fetchClient, createClient, changeClient, deleteClient } from '../../../actions/clients';
 
 import CatalogForm from '../CatalogForm';
@@ -12,7 +13,7 @@ const ClientForm = props => (
       <label htmlFor="name">Назва</label>
       <input
         type="text"
-        className="form-control"
+        className={CSS_INPUT}
         id="name"
         placeholder="Назва"
         name="name"
@@ -24,7 +25,7 @@ const ClientForm = props => (
       <label htmlFor="edrpou">ЕДРПОУ</label>
       <input
         type="text"
-        className="form-control"
+        className={CSS_INPUT}
         id="edrpou"
         placeholder="ЕДРПОУ"
         name="edrpou"

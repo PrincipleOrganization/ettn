@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { CSS_INPUT } from '../../../constants';
 import { fetchVehicle, createVehicle, changeVehicle, deleteVehicle } from '../../../actions/vehicles';
 
 import CatalogForm from '../CatalogForm';
@@ -21,7 +22,7 @@ const VehicleForm = (props) => {
         <label htmlFor="name">Назва</label>
         <input
           type="text"
-          className="form-control"
+          className={CSS_INPUT}
           id="name"
           placeholder="Назва"
           name="name"
@@ -32,7 +33,7 @@ const VehicleForm = (props) => {
       <div className="form-group">
         <label htmlFor="type">Тип</label>
         <select
-          className="form-control"
+          className={CSS_INPUT}
           id="type"
           name="type"
           onChange={props.onChange}

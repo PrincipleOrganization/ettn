@@ -27,6 +27,7 @@ class CatalogForm extends Component {
     };
 
     this.updateParams = this.updateParams.bind(this);
+    this.reread = this.reread.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -43,6 +44,13 @@ class CatalogForm extends Component {
       this.params.data = { ...getData(data, id) } || blank;
       this.params.reread = false;
     }
+  }
+
+  reread() {
+    this.props.fetch(this.props.id);
+    this.params.reread = true;
+    this.params.modified = false;
+    this.forceUpdate();
   }
 
   handleInputChange(e) {
@@ -127,16 +135,9 @@ class CatalogForm extends Component {
               >
                 Зберегти
               </button>
-              <button
-                type="button"
-                className="btn btn-default"
-                onClick={this.handleClose}
-              >
-                Закрити
-              </button>
             </div>
 
-            <div className="btn-group btn-group-sm pull-right">
+            <div className="btn-group btn-group-sm pull-left">
               <button
                 type="button"
                 className="btn btn-default dropdown-toggle"
@@ -149,7 +150,18 @@ class CatalogForm extends Component {
               </button>
               <ul className="dropdown-menu">
                 <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={this.handleDelete}>Видалити</a></li>
+                <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={this.reread}>Перечитати</a></li>
               </ul>
+            </div>
+
+            <div className="btn-group btn-group-sm pull-right">
+              <button
+                type="button"
+                className="close"
+                onClick={this.handleClose}
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
           </div>
 

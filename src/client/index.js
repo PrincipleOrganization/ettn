@@ -14,4 +14,5 @@ ReactDOM.render(
   <Provider store={store}>
     <Base />
   </Provider>,
-  document.getElementById('app'));
+  document.getElementById('app'),
+);

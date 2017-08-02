@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { CSS_INPUT } from '../../../constants';
 import { fetchDriver, createDriver, changeDriver, deleteDriver } from '../../../actions/drivers';
 
 import CatalogForm from '../CatalogForm';
@@ -12,7 +13,7 @@ const DriverForm = props => (
       <label htmlFor="name">Назва</label>
       <input
         type="text"
-        className="form-control"
+        className={CSS_INPUT}
         id="name"
         placeholder="Назва"
         name="name"

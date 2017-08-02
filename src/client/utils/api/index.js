@@ -5,6 +5,7 @@ import PointsApi from './points.api';
 import ClientsApi from './clients.api';
 import DriversApi from './drivers.api';
 import VehiclesApi from './vehicles.api';
+import ScalesApi from './scales.api';
 import NomenclatureApi from './nomenclature.api';
 import LoadingBillsApi from './loadingBills.api';
 
@@ -17,6 +18,7 @@ export {
   PointsApi,
   ClientsApi,
   VehiclesApi,
+  ScalesApi,
   NomenclatureApi,
   LoadingBillsApi,
 };

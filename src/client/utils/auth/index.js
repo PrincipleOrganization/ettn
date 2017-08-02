@@ -1,5 +1,9 @@
 /* eslint-disable no-undef */
 
+const USER_ROLE_ADMIN = 'admin';
+const USER_ROLE_CHANGE = 'change';
+const USER_ROLE_READ = 'read';
+
 class Auth {
   constructor() {
     this.tokenKey = 'token';
@@ -28,6 +32,10 @@ class Auth {
       role: localStorage.getItem(this.userRoleKey) || '',
       slug: localStorage.getItem(this.userSlugKey) || '',
     };
+  }
+
+  userIsAdmin() {
+    return (this.getUser().role === USER_ROLE_ADMIN) || false;
   }
 
   authUser(token, user, id, role, slug) {

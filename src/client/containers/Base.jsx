@@ -10,7 +10,8 @@ import Drivers from '../components/catalogs/drivers/Drivers';
 import Vehicles from '../components/catalogs/vehicles/Vehicles';
 import Clients from '../components/catalogs/clients/Clients';
 import Nomenclature from '../components/catalogs/nomenclature/Nomenclature';
-import LoadingBillsList from '../components/documents/loadingBills/LoadingBillsList';
+import Scales from '../components/catalogs/scales/Scales';
+import LoadingBills from '../components/documents/loadingBills/LoadingBills';
 
 const PrivateRoute = ({ component: Component, authed, ...rest }) => (
   <Route
@@ -52,12 +53,13 @@ const Base = ({ authed }) => (
           return <LoginPage />;
         }}
       />
-      <PrivateRoute path="/loadingBills" component={LoadingBillsList} authed={authed} />
+      <PrivateRoute path="/loadingBills" component={LoadingBills} authed={authed} />
       <PrivateRoute path="/drivers" component={Drivers} authed={authed} />
       <PrivateRoute path="/vehicles" component={Vehicles} authed={authed} />
       <PrivateRoute path="/clients" component={Clients} authed={authed} />
       <PrivateRoute path="/points" component={Points} authed={authed} />
       <PrivateRoute path="/nomenclature" component={Nomenclature} authed={authed} />
+      <PrivateRoute path="/scales" component={Scales} authed={authed} />
     </div>
   </Router>
 );

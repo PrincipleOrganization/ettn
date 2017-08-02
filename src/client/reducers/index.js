@@ -5,6 +5,7 @@ import drivers from './drivers';
 import points from './points';
 import clients from './clients';
 import vehicles from './vehicles';
+import scales from './scales';
 import nomenclature from './nomenclature';
 import loadingBills from './loadingBills';
 
@@ -20,6 +21,7 @@ export default combineReducers({
   points,
   clients,
   vehicles,
+  scales,
   nomenclature,
   loadingBills,
 });

@@ -4,6 +4,7 @@ import nomenclature from './nomenclature/routes';
 import client from './clients/routes';
 import driver from './drivers/routes';
 import vehicle from './vehicles/routes';
+import scale from './scales/routes';
 import loadingBill from './loadingBills/routes';
 
 export default (app) => {
@@ -13,5 +14,6 @@ export default (app) => {
   app.use('/api/v1/client', client);
   app.use('/api/v1/driver', driver);
   app.use('/api/v1/vehicle', vehicle);
+  app.use('/api/v1/scale', scale);
   app.use('/api/v1/loadingBill', loadingBill);
 };
