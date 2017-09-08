@@ -4,9 +4,20 @@ import moment from 'moment';
 
 import { database } from '../../config';
 
+import Clients from '../clients/model';
+import Drivers from '../drivers/model';
+import Nomeclature from '../nomenclature/model';
+import Points from '../points/model';
+import Vehicles, { Types as VehiclesTypes } from '../vehicles/model';
+
 const db = database();
 
 const TABLE = 'loadingBills';
+
+const Types = {
+  INCOME: 'income',
+  OUTCOME: 'outcome',
+};
 
 export default class LoadingBill {
   constructor(args) {
@@ -16,18 +27,23 @@ export default class LoadingBill {
     this.number = args.number || LoadingBill.generateNumber();
     this.createdAt = args.createdAt || date;
     this.changedAt = date;
+    this.type = args.type || Types.INCOME;
     this.verified = args.verified || false;
     this.slug = slug(`${this.number} from ${this.createdAt}`);
     this.mark = args.mark || false;
-    this.vehicle = args.vehicle;
-    this.trailer = args.trailer || '';
-    this.driver = args.driver;
-    this.carrier = args.carrier;
-    this.customer = args.customer;
-    this.sender = args.sender;
-    this.recipient = args.recipient;
-    this.shippingPoint = args.shippingPoint;
-    this.scale = args.scale;
+    this.vehicle = Vehicles.createVehicleIfNotExist(args.vehicle);
+    this.trailer = Vehicles.createVehicleIfNotExist(args.trailer, VehiclesTypes.TRAILER);
+    this.driver = Drivers.createDriverIfNotExist(args.driver);
+    this.carrier = Clients.createClientIfNotExist(args.carrier);
+    this.customer = Clients.createClientIfNotExist(args.customer);
+    this.sender = Clients.createClientIfNotExist(args.sender);
+    this.recipient = Clients.createClientIfNotExist(args.recipient);
+    this.shippingPoint = Points.createPointIfNotExist(args.shippingPoint);
+    this.grossScale = args.grossScale;
+    this.taraScale = args.taraScale;
+    this.grossOperator = args.grossOperator;
+    this.taraOperator = args.taraOperator;
+    this.netOperator = args.netOperator;
     this.gross = args.gross || 0;
     this.tara = args.tara || 0;
     this.net = args.net || 0;
@@ -37,6 +53,8 @@ export default class LoadingBill {
     this.goods = args.goods;
     this.author = args.author;
     this.comment = args.comment || '';
+
+    this.handleNomeclature();
   }
 
   static getLoadingBills() {
@@ -54,15 +72,15 @@ export default class LoadingBill {
     if (loadingBill) {
       return { loadingBill, messages: [] };
     }
-    return { loadingBill: {}, messages: ['No such loading bill with this id'] };
+    return { loadingBill: {}, messages: ['Товарно-транспортна накладна не знайдена'] };
   }
 
   static createLoadingBill(args) {
     db.read();
 
-    const loadingBillDb = db.get(TABLE).find({ name: args.name }).value();
+    const loadingBillDb = db.get(TABLE).find({ number: args.number }).value();
     if (loadingBillDb) {
-      return { loadingBill: {}, messages: ['Loading bill with this name exists'] };
+      return { loadingBill: {}, messages: ['Товарно-транспортна накладна з таким номером існує'] };
     }
 
     let loadingBill = new LoadingBill({ ...args, number: '', createdAt: '', verified: false });
@@ -73,8 +91,7 @@ export default class LoadingBill {
 
   static changeLoadingBill(id, args) {
     let messages = [];
-    const loadingBillDb = LoadingBill.findById(id);
-    const loadingBillDbValue = loadingBillDb.value();
+    const loadingBillDbValue = LoadingBill.findById(id).value();
     if (loadingBillDbValue) {
       const { createdAt, number, author } = loadingBillDbValue;
       const loadingBill = new LoadingBill({
@@ -90,20 +107,20 @@ export default class LoadingBill {
       }
       if (messages.length === 0) {
         return {
-          loadingBill: loadingBillDb.assign({ ...loadingBill.toJSON() }).write(),
+          loadingBill: db.get(TABLE).find({ id }).assign({ ...loadingBill.toJSON() }).write(),
           messages,
         };
       }
       return { loadingBill: {}, messages };
     }
-    return { loadingBill: {}, messages: ['No such loading bill with this id'] };
+    return { loadingBill: {}, messages: ['Товарно-транспортна накладна не знайдена'] };
   }
 
   static removeLoadingBill(id) {
     const messages = [];
     const loadingBill = LoadingBill.findById(id).value();
     if (!loadingBill) {
-      messages.push('No such loading bill with this id');
+      messages.push('Товарно-транспортна накладна не знайдена');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -126,51 +143,49 @@ export default class LoadingBill {
     return maxNumber.toString();
   }
 
+  handleNomeclature() {
+    for (let i = 0; i < this.goods.length; i += 1) {
+      const nomenclature = this.goods[i].nomenclature;
+      this.goods[i].nomenclature = Nomeclature.createNomenclatureIfNotExist(nomenclature);
+    }
+  }
+
   validate() {
     const messages = [];
     if (!this.vehicle) {
-      messages.push('Vehicle is required!');
+      messages.push('Не вказано транспортний засіб!');
     }
     if (!this.driver) {
-      messages.push('Driver is required!');
+      messages.push('Не вказано водія!');
     }
     if (!this.carrier) {
-      messages.push('Carrier is required!');
+      messages.push('Не вказано перевізника!');
     }
     if (!this.customer) {
-      messages.push('Customer is required!');
+      messages.push('Не вказано замовника!');
     }
     if (!this.sender) {
-      messages.push('Sender is required!');
+      messages.push('Не вказано відправника!');
     }
     if (!this.recipient) {
-      messages.push('Recipient is required!');
+      messages.push('Не вказано отримувача!');
     }
     if (!this.shippingPoint) {
-      messages.push('Shipping point is required!');
+      messages.push('Не вказано пункт завантаження!');
     }
-    if (!this.shippingPoint) {
-      messages.push('Shipping point is required!');
-    }
-    if (!this.shippingPoint) {
-      messages.push('Shipping point is required!');
-    }
-    if (!this.shippingPoint) {
-      messages.push('Shipping point is required!');
-    }
-    if (!this.scale) {
-      messages.push('Scale is required!');
+    if (!this.author) {
+      messages.push('Не вказано автора!');
     }
     if (this.goods.length === 0) {
-      messages.push('Goods is required!');
+      messages.push('Не вказано товари!');
     } else {
       for (let i = 0; i < this.goods.length; i += 1) {
         const good = this.goods[i];
         if (!good.nomenclature) {
-          messages.push(`Nomenclature in string #${i} is required!`);
+          messages.push(`Не вказано номенклатуру в стрічці ${i + 1}!`);
         }
         if (!good.quantity) {
-          messages.push(`Quantity of nomenclature in string #${i} is required!`);
+          messages.push(`Не вказано кількість в стрічці ${i + 1}!`);
         }
       }
     }

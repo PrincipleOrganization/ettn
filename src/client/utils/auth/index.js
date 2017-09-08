@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 
-const USER_ROLE_ADMIN = 'admin';
-const USER_ROLE_CHANGE = 'change';
-const USER_ROLE_READ = 'read';
+import { Roles } from '../../constants';
 
 class Auth {
   constructor() {
@@ -35,7 +33,7 @@ class Auth {
   }
 
   userIsAdmin() {
-    return (this.getUser().role === USER_ROLE_ADMIN) || false;
+    return (this.getUser().role === Roles.ADMIN) || false;
   }
 
   authUser(token, user, id, role, slug) {

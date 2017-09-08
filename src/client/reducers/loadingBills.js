@@ -20,7 +20,8 @@ import { updateData } from '.';
 
 const initialState = {
   data: [],
-  e: null,
+  e: [],
+  m: [],
   isFetched: false,
 };
 
@@ -31,11 +32,15 @@ export default (state = initialState, action) => {
     case FETHC_LOADING_BILLS:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case FETHC_LOADING_BILLS_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
         isFetched: true,
       };
     case FETHC_LOADING_BILLS_SUCCESS:
@@ -43,17 +48,23 @@ export default (state = initialState, action) => {
         ...state,
         data: action.data,
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // ONE
     case FETCH_LOADING_BILL:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case FETCH_LOADING_BILL_ERROR:
       return {
         ...state,
-        e: action.e,
+        e: [],
+        m: action.m,
         isFetched: true,
       };
     case FETCH_LOADING_BILL_SUCCESS:
@@ -61,12 +72,16 @@ export default (state = initialState, action) => {
         ...state,
         data: updateData(state.data, action.data.loadingBill),
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // CREATE
     case CREATE_LOADING_BILL:
       return {
         ...state,
+        e: [],
+        m: [],
         isFetched: false,
       };
     case CREATE_LOADING_BILL_ERROR:
@@ -74,7 +89,7 @@ export default (state = initialState, action) => {
         ...state,
         isFetched: true,
         e: action.e,
-        data: state.data.filter(element => element.id !== action.data.loadingBill.id),
+        m: [],
       };
     case CREATE_LOADING_BILL_SUCCESS:
       return {
@@ -84,17 +99,23 @@ export default (state = initialState, action) => {
           action.data.loadingBill,
         ],
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // CHANGE
     case CHANGE_LOADING_BILL:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case CHANGE_LOADING_BILL_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
         isFetched: true,
       };
     case CHANGE_LOADING_BILL_SUCCESS:
@@ -102,22 +123,32 @@ export default (state = initialState, action) => {
         ...state,
         data: updateData(state.data, action.data.loadingBill),
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // DELETE
     case DELETE_LOADING_BILLS:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case DELETE_LOADING_BILLS_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
+        isFetched: true,
       };
     case DELETE_LOADING_BILLS_SUCCESS:
       return {
         ...state,
         data: state.data.filter(element => element.id !== action.id),
+        isFetched: true,
+        e: [],
+        m: [],
       };
 
     default:

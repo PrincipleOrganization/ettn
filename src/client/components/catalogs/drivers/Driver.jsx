@@ -42,6 +42,9 @@ const Driver = props => (
     id={props.match.params.id}
     blank={{ name: '' }}
     data={props.drivers.data}
+    m={props.drivers.m}
+    e={props.drivers.e}
+    isFetched={props.drivers.isFetched}
     history={props.history}
     url="/drivers"
     fetch={props.fetchDriver}
@@ -53,11 +56,19 @@ const Driver = props => (
   </CatalogForm>
 );
 
+Driver.defaultProps = {
+  m: [],
+  e: [],
+};
+
 Driver.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   drivers: PropTypes.shape({
     data: PropTypes.array.isRequired,
+    m: PropTypes.array.isRequired,
+    e: PropTypes.array.isRequired,
+    isFetched: PropTypes.bool.isRequired,
   }).isRequired,
 
   fetchDriver: PropTypes.func.isRequired,

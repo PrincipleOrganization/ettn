@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchScales, deleteScale } from '../../../actions/scales';
+import { fetchScales, changeScale } from '../../../actions/scales';
 
 import CatalogList from '../CatalogList';
 
@@ -17,7 +17,7 @@ const ScalesList = (props) => {
         isFetched={isFetched}
         history={props.history}
         fetch={props.fetchScales}
-        delete={props.deleteScale}
+        change={props.changeScale}
       />
     </div>
   );
@@ -31,9 +31,9 @@ ScalesList.propTypes = {
   history: PropTypes.shape({}).isRequired,
 
   fetchScales: PropTypes.func.isRequired,
-  deleteScale: PropTypes.func.isRequired,
+  changeScale: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   scales: state.scales,
-}), { fetchScales, deleteScale })(ScalesList);
+}), { fetchScales, changeScale })(ScalesList);

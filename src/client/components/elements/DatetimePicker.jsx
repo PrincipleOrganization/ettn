@@ -39,9 +39,7 @@ const DateTimePicker = ({
 
 DateTimePicker.defaultProps = {
   defaultValue: moment(),
-  onChange: (e) => {
-    console.log(e);
-  },
+  onChange: () => {},
 };
 
 DateTimePicker.propTypes = {

@@ -1,4 +1,5 @@
-import { ScalesApi } from '../utils';
+import { ScalesApi, catalogs } from '../utils';
+import { SmartScales, getWeight } from '../components/catalogs/scales/methods';
 
 export const FETCH_SCALES = 'FETCH_SCALES';
 export const FETCH_SCALES_ERROR = 'FETCH_SCALES_ERROR';
@@ -19,6 +20,42 @@ export const CHANGE_SCALE_SUCCESS = 'CHANGE_SCALE_SUCCESS';
 export const DELETE_SCALE = 'DELETE_SCALE';
 export const DELETE_SCALE_ERROR = 'DELETE_SCALE_ERROR';
 export const DELETE_SCALE_SUCCESS = 'DELETE_SCALE_SUCCESS';
+
+export const GET_WEIGHT = 'GET_WEIGHT';
+export const GET_WEIGHT_ERROR = 'GET_WEIGHT_ERROR';
+export const GET_WEIGHT_SUCCESS = 'GET_WEIGHT_SUCCESS';
+
+// export const getWeightForScales = id => (
+//   (dispatch) => {
+//     dispatch({ type: GET_WEIGHT, id });
+//     const scalesValue = catalogs.getCatalogValueById(id);
+//     if (!scalesValue) {
+//       return dispatch({
+//         type: GET_WEIGHT_ERROR,
+//         e: 'Can\'t find scales by id',
+//         id,
+//       });
+//     }
+    
+//     const smartScales = new SmartScales(scalesValue);
+//     getWeight(smartScales, (weight, e) => {
+//       if (e) {
+//         return dispatch({
+//           type: GET_WEIGHT_ERROR,
+//           e,
+//           id,
+//         });
+//       }
+//       return dispatch({ type: GET_WEIGHT_SUCCESS, id, weight });
+//     });
+//   }
+// );
+
+// const getWeightForAllScales = (scales) => {
+//   for (let i = 0; i < scales.length; i += 1) {
+//     getWeightForScales(scales.id);
+//   }
+// };
 
 export const fetchScales = () => (
   async (dispatch) => {
@@ -44,10 +81,10 @@ export const fetchScale = id => (
         throw data.messages;
       }
       return dispatch({ type: FETCH_SCALE_SUCCESS, data });
-    } catch (e) {
+    } catch (m) {
       return dispatch({
         type: FETCH_SCALE_ERROR,
-        e,
+        m,
       });
     }
   }

@@ -4,6 +4,10 @@ import uuid from 'uuid';
 
 import { CSS_OBJECT_HEADER } from '../../constants';
 
+import { Icon, Spinner } from '../elements';
+import { dialog } from '../../utils';
+import { deleteDialog } from './methods';
+
 const getData = (list, id) => {
   for (let i = 0; i < list.length; i += 1) {
     if (list[i].id === id) {
@@ -32,15 +36,22 @@ class CatalogForm extends Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.goBack = this.goBack.bind(this);
   }
 
   componentDidMount() {
-    this.props.fetch(this.props.id);
+    if (!this.params.new) {
+      this.props.fetch(this.props.id);
+    }
+  }
+
+  goBack() {
+    this.props.history.push(this.props.url);
   }
 
   updateParams() {
-    const { id, blank, data } = this.props;
-    if (data.length !== 0) { // fetched
+    const { id, blank, data, isFetched } = this.props;
+    if (isFetched) { // fetched
       this.params.data = { ...getData(data, id) } || blank;
       this.params.reread = false;
     }
@@ -60,46 +71,55 @@ class CatalogForm extends Component {
     this.forceUpdate();
   }
 
-  handleSave(close = false) {
+  async handleSave(close = false) {
     if (this.params.new) {
       const payload = {
         ...this.params.data,
         id: uuid(),
       };
-      this.props.create(payload);
-      this.props.history.replace(`${this.props.url}/${payload.id}`);
-      this.params.new = false;
+      await this.props.create(payload);
+      if (this.props.e.length === 0) {
+        this.props.history.replace(`${this.props.url}/${payload.id}`);
+        this.params.new = false;
+      } else {
+        return;
+      }
     } else {
-      this.props.change(this.props.id, this.params.data);
+      await this.props.change(this.props.id, this.params.data);
     }
 
     if (close) {
       this.props.history.goBack();
     } else {
       this.params.modified = false;
+      this.forceUpdate();
     }
   }
 
-  handleClose(e) {
-    e.preventDefault();
-    this.props.history.goBack();
+  handleClose() {
+    if (this.params.modified) {
+      dialog.showOnCloseDialog(this.goBack);
+    } else {
+      this.goBack();
+    }
   }
 
-  handleDelete(e) {
-    e.preventDefault();
+  async handleDelete() {
     if (!this.params.new) {
-      this.props.delete(this.props.id);
-      this.props.history.goBack();
+      this.params.data.mark = !this.params.data.mark;
+      await this.handleSave();
     }
   }
 
   render() {
+    const haveErrors = dialog.showError(this.props.m, this.goBack);
+
     if (this.params.reread && !this.params.new) {
       this.updateParams();
     }
 
-    let elementToRender = 'Loading...';
-    if (!this.params.reread) {
+    let elementToRender = <Spinner />;
+    if (!this.params.reread && !haveErrors && (this.props.isFetched || this.params.new)) {
       const children = Children.map(
         this.props.children,
         child => React.cloneElement(child, {
@@ -114,10 +134,14 @@ class CatalogForm extends Component {
       }
 
       const title = `${this.props.title} ${subTitle} - ${this.params.data.name}`;
+      let icon = null;
+      if (this.params.data.mark) {
+        icon = <Icon.MarkToRemove />;
+      }
 
       elementToRender = (
         <div>
-          <p className={CSS_OBJECT_HEADER}>{title}</p>
+          <p className={CSS_OBJECT_HEADER}>{icon} {title}</p>
 
           <div className="btn-toolbar object-toolbar clearfix" role="toolbar">
             <div className="btn-group btn-group-sm pull-left" role="group">
@@ -126,6 +150,7 @@ class CatalogForm extends Component {
                 className="btn btn-primary"
                 onClick={() => this.handleSave(true)}
               >
+                <Icon.SaveClose />
                 Зберегти та закрити
               </button>
               <button
@@ -133,6 +158,7 @@ class CatalogForm extends Component {
                 className="btn btn-default"
                 onClick={() => this.handleSave()}
               >
+                <Icon.Save />
                 Зберегти
               </button>
             </div>
@@ -149,8 +175,17 @@ class CatalogForm extends Component {
                 <span className="caret" />
               </button>
               <ul className="dropdown-menu">
-                <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={this.handleDelete}>Видалити</a></li>
-                <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={this.reread}>Перечитати</a></li>
+                <li>
+                  <a
+                    role="button"
+                    className={this.params.new ? 'disabled' : ''}
+                    onClick={() => { deleteDialog(this, this.params.data.mark, false) }}
+                  >
+                    <Icon.Remove />
+                    Видалити
+                  </a>
+                </li>
+                <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={this.reread}><Icon.Refresh />Перечитати</a></li>
               </ul>
             </div>
 
@@ -180,6 +215,8 @@ class CatalogForm extends Component {
 
 CatalogForm.defaultProps = {
   id: '',
+  m: [],
+  e: [],
 };
 
 CatalogForm.propTypes = {
@@ -187,6 +224,9 @@ CatalogForm.propTypes = {
   id: PropTypes.string,
   blank: PropTypes.shape({}).isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isFetched: PropTypes.bool.isRequired,
+  m: PropTypes.arrayOf(PropTypes.string),
+  e: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.element.isRequired,
   url: PropTypes.string.isRequired,
   history: PropTypes.shape().isRequired,

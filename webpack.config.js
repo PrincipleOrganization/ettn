@@ -6,6 +6,32 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 
+const isProd = process.env.NODE_ENV === 'development';
+
+const externals = [];
+if (isProd) {
+  externals.push(nodeExternals());
+}
+
+const serverRules = [
+  {
+    test: /\.js$/,
+    exclude: /node_modules/,
+    use: ['babel-loader'],
+  },
+];
+
+if (!isProd) {
+  serverRules.push({
+    test: /node_modules\/JSONStream\/index\.js$/,
+    loader: 'string-replace-loader',
+    query: {
+      search: '#! /usr/bin/env node',
+      replace: ' ',
+    },
+  });
+}
+
 const extractText = new ExtractTextPlugin({
   filename: '/css/[name].css',
   disable: false,
@@ -21,7 +47,7 @@ module.exports = [
   {
     name: 'server',
     target: 'node',
-    externals: [nodeExternals()],
+    externals,
     entry: {
       index: './src/server/index.js',
     },
@@ -31,13 +57,7 @@ module.exports = [
       libraryTarget: 'commonjs2',
     },
     module: {
-      rules: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: 'babel-loader',
-        },
-      ],
+      rules: serverRules,
     },
   },
   {
@@ -55,6 +75,14 @@ module.exports = [
     },
     module: {
       rules: [
+        {
+          test: /\.css$/,
+          use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: ['css-loader'],
+            publicPath: '/dist',
+          }),
+        },
         {
           test: /\.scss$/,
           use: ExtractTextPlugin.extract({
@@ -84,15 +112,10 @@ module.exports = [
             'file-loader?name=images/[name].[ext]',
           ],
         },
-        // {
-        //   test: /\.(woff|woff2|eot|ttf)$/i,
-        //   loader: "file-loader?name=fonts/[name]-[hash].[ext]"
-        // },
         {
-          test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-          use: 'url-loader?limit=10000&name=fonts/[name].[ext]&mimetype=application/font-woff',
+          test: /\.(woff|woff2|ttf|eot)/,
+          use: 'url-loader?limit=100000&name=[name].[ext]',
         },
-        { test: /\.(ttf|eot)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'file-loader?name=fonts/[name]-[hash].[ext]' },
         {
           test: /bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/,
           loader: 'imports-loader?jQuery=jquery',
@@ -109,6 +132,9 @@ module.exports = [
       }),
       extractText,
       new webpack.NamedModulesPlugin(),
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      }),
     ],
   },
 ];

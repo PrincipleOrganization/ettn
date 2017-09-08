@@ -12,7 +12,6 @@ const TABLE = 'users';
 const Roles = {
   ADMIN: 'admin',
   CHANGE: 'change',
-  READ: 'read',
 };
 
 const createToken = id => (jwt.sign({ id }, constants.JWT_SECRET));
@@ -22,8 +21,9 @@ export default class User {
     this.id = args.id || uuid();
     this.name = args.name;
     this.password = crypt.encrypt(args.password);
-    this.role = args.role || Roles.READ;
+    this.role = args.role || Roles.CHANGE;
     this.slug = slug(args.name);
+    this.mark = args.mark || false;
   }
 
   static getUsers() {
@@ -41,12 +41,20 @@ export default class User {
     return db.get(TABLE).find({ name });
   }
 
+  static getUser(id) {
+    const user = User.findById(id).value();
+    if (user) {
+      return { user, messages: [] };
+    }
+    return { user: {}, messages: ['Користувач не знайдено'] };
+  }
+
   static createUser(args) {
     db.read();
 
     const userDb = db.get(TABLE).find({ name: args.name }).value();
     if (userDb) {
-      return { user: {}, messages: ['User with this name exists'] };
+      return { user: {}, messages: ['Користувач з таким іменем вже існує'] };
     }
 
     let user = new User({ ...args });
@@ -73,14 +81,14 @@ export default class User {
       }
       return { user: {}, messages };
     }
-    return { user: {}, messages: ['No such user with this id'] };
+    return { user: {}, messages: ['Користувач не знайдено'] };
   }
 
   static removeUser(id) {
     const messages = [];
     const user = User.findById(id).value();
     if (!user) {
-      messages.push('No such user with this id');
+      messages.push('Користувач не знайдено');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -121,10 +129,10 @@ export default class User {
   validate() {
     const messages = [];
     if (!this.name) {
-      messages.push('Name is required!');
+      messages.push('Не вказано ім\'я користувача!');
     }
     if (!this.password) {
-      messages.push('Password is required!');
+      messages.push('Не вказано пароль користувача!');
     }
     return messages;
   }
@@ -135,6 +143,7 @@ export default class User {
       name: this.name,
       role: this.role,
       slug: this.slug,
+      mark: this.mark,
     };
   }
 }

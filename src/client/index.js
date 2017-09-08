@@ -6,6 +6,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
+import './styles/sweetalert2.min.css';
+import '../../node_modules/font-awesome/scss/font-awesome.scss';
+import '../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
+
 import store from './store';
 
 import { Base } from './containers';

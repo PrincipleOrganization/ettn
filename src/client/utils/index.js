@@ -1,6 +1,7 @@
 import Auth from './auth';
 import * as catalogs from './catalogs';
 import * as format from './format';
+import * as dialog from './dialog';
 import {
   UsersApi,
   DriversApi,
@@ -15,6 +16,7 @@ import {
 export {
   catalogs,
   format,
+  dialog,
   Auth,
   UsersApi,
   DriversApi,

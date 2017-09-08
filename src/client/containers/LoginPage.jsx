@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import { login, fetchUsers } from '../actions/users';
 
+import logo from '../images/logo.svg';
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,7 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchUsers();
+    this.props.fetchUsers(true);
   }
 
   authorizeUser(e) {
@@ -46,8 +48,8 @@ class Login extends Component {
     const user = this.state.user;
 
     return (
-      <div className="login-page">
-        <h2>еТТН</h2>
+      <div className="col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 login-page">
+        <img src={logo} />
 
         <form onSubmit={this.authorizeUser}>
           <div className="form-group">

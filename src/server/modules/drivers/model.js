@@ -30,7 +30,7 @@ export default class Driver {
     if (driver) {
       return { driver, messages: [] };
     }
-    return { driver: {}, messages: ['No such driver with this id'] };
+    return { driver: {}, messages: ['Водія не знайдено'] };
   }
 
   static createDriver(args) {
@@ -38,7 +38,7 @@ export default class Driver {
 
     const driverDb = db.get(TABLE).find({ name: args.name }).value();
     if (driverDb) {
-      return { driver: {}, messages: ['Driver with this name exists'] };
+      return { driver: {}, messages: ['Водій з таким іменем вже існує'] };
     }
 
     let driver = new Driver({ ...args });
@@ -64,14 +64,37 @@ export default class Driver {
       }
       return { driver: {}, messages };
     }
-    return { driver: {}, messages: ['No such driver with this id'] };
+    return { driver: {}, messages: ['Водія не знайдено'] };
+  }
+
+  static createDriverIfNotExist(arg) {
+    if (!arg) {
+      return '';
+    }
+
+    db.read();
+
+    let driverDb = db.get(TABLE).find({ id: arg }).value();
+    if (driverDb) {
+      return driverDb.id;
+    }
+
+    driverDb = db.get(TABLE).find({ name: arg }).value();
+    if (driverDb) {
+      return driverDb.id;
+    }
+
+    let driver = new Driver({ name: arg });
+    driver = driver.toJSON();
+    db.get(TABLE).push(driver).write();
+    return driver.id;
   }
 
   static removeDriver(id) {
     const messages = [];
     const driver = Driver.findById(id).value();
     if (!driver) {
-      messages.push('No such driver with this id');
+      messages.push('Водія не знайдено');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -82,7 +105,7 @@ export default class Driver {
   validate() {
     const messages = [];
     if (!this.name) {
-      messages.push('Name is required!');
+      messages.push('Не вказана назва!');
     }
     return messages;
   }

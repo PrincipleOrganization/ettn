@@ -1,14 +1,3 @@
-
-/*
-* SPEC
-* Get All
-* Create
-* Change
-* Verification
-* Delete
-* Weight Th Doc
-*/
-
 import { LoadingBillsApi } from '../utils';
 
 export const FETHC_LOADING_BILLS = 'FETHC_LOADING_BILLS';
@@ -55,10 +44,10 @@ export const fetchLoadingBill = id => (
         throw data.messages;
       }
       return dispatch({ type: FETCH_LOADING_BILL_SUCCESS, data });
-    } catch (e) {
+    } catch (m) {
       return dispatch({
         type: FETCH_LOADING_BILL_ERROR,
-        e,
+        m,
       });
     }
   }

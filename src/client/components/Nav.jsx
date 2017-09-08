@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { logout } from '../actions/users';
+import { Icon } from './elements';
+
+import { Auth } from '../utils';
 
 const handleLogout = (e, logoutFunc) => {
   e.preventDefault();
@@ -65,85 +68,100 @@ const BrandImage = () => {
   );
 };
 
-const Nav = ({ user, logout: logoutFunc }) => (
-  <nav className="navbar navbar-default navbar-fixed-top">
-    <div className="container-fluid">
+const Nav = ({ user, logout: logoutFunc }) => {
+  let settings = null;
+  let scales = null;
+  if (Auth.userIsAdmin()) {
+    settings = (
+      <li>
+        <NavLink to="/settings"><Icon.Settings />Налаштування</NavLink>
+      </li>
+    );
 
-      <div className="navbar-header">
-        <span className="navbar-brand"><BrandImage /></span>
+    scales = (
+      <li><NavLink to="/scales">Ваги</NavLink></li>
+    );
+  }
+
+  return (
+    <nav className="navbar navbar-default navbar-fixed-top">
+      <div className="container-fluid">
+  
+        <div className="navbar-header">
+          <span className="navbar-brand"><BrandImage /></span>
+        </div>
+  
+        <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul className="nav navbar-nav">
+            <li><NavLink to="/loadingBills">Документи</NavLink></li>
+  
+            <li className="dropdown">
+              <a
+                className="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Довідники
+                <span className="caret" />
+              </a>
+              <ul className="dropdown-menu">
+                <li><NavLink to="/drivers">Водії</NavLink></li>
+                <li><NavLink to="/vehicles">Транспортні засоби</NavLink></li>
+                <li><NavLink to="/clients">Контрагенти</NavLink></li>
+                <li><NavLink to="/points">Пункти</NavLink></li>
+                <li><NavLink to="/nomenclature">Номенклатура</NavLink></li>
+                {scales}
+              </ul>
+            </li>
+  
+            <li className="dropdown">
+              <a
+                className="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Звіти
+                <span className="caret" />
+              </a>
+              <ul className="dropdown-menu">
+                <li><NavLink to="/drivers">Водії</NavLink></li>
+              </ul>
+            </li>
+          </ul>
+  
+          <ul className="nav navbar-nav navbar-right">
+            <li className="dropdown">
+              <a
+                className="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <Icon.User />
+                {user.name}
+                <span className="caret" />
+              </a>
+              <ul className="dropdown-menu">
+                {settings}
+                <li>
+                  <NavLink to="/login" onClick={e => handleLogout(e, logoutFunc)}>
+                    <Icon.Logout />Вийти
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+  
       </div>
-
-      <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul className="nav navbar-nav">
-          <li><NavLink to="/loadingBills">Документи</NavLink></li>
-
-          <li className="dropdown">
-            <a
-              className="dropdown-toggle"
-              data-toggle="dropdown"
-              role="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Довідники
-              <span className="caret" />
-            </a>
-            <ul className="dropdown-menu">
-              <li><NavLink to="/drivers">Водії</NavLink></li>
-              <li><NavLink to="/vehicles">Транспортні засоби</NavLink></li>
-              <li><NavLink to="/clients">Контрагенти</NavLink></li>
-              <li><NavLink to="/points">Пункти</NavLink></li>
-              <li><NavLink to="/nomenclature">Номенклатура</NavLink></li>
-              <li><NavLink to="/scales">Ваги</NavLink></li>
-            </ul>
-          </li>
-
-          <li className="dropdown">
-            <a
-              className="dropdown-toggle"
-              data-toggle="dropdown"
-              role="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Звіти
-              <span className="caret" />
-            </a>
-            <ul className="dropdown-menu">
-              <li><NavLink to="/drivers">Водії</NavLink></li>
-            </ul>
-          </li>
-        </ul>
-
-        <ul className="nav navbar-nav navbar-right">
-          <li className="dropdown">
-            <a
-              className="dropdown-toggle"
-              data-toggle="dropdown"
-              role="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              {user.name}
-              <span className="caret" />
-            </a>
-            <ul className="dropdown-menu">
-              <li>
-                <a>Налаштування</a>
-              </li>
-              <li>
-                <Link to="/login" onClick={e => handleLogout(e, logoutFunc)}>
-                  Вийти
-                </Link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-  </nav>
-);
+    </nav>
+  );
+};
 
 Nav.propTypes = {
   logout: PropTypes.func.isRequired,

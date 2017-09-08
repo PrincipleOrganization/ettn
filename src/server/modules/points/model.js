@@ -30,7 +30,7 @@ export default class Point {
     if (point) {
       return { point, messages: [] };
     }
-    return { point: {}, messages: ['No such point with this id'] };
+    return { point: {}, messages: ['Пункт не знайдено'] };
   }
 
   static createPoint(args) {
@@ -38,7 +38,7 @@ export default class Point {
 
     const pointDb = db.get(TABLE).find({ name: args.name }).value();
     if (pointDb) {
-      return { point: {}, messages: ['Point with this name exists'] };
+      return { point: {}, messages: ['Пункт з таким іменем вже існує'] };
     }
 
     let point = new Point({ ...args });
@@ -49,6 +49,29 @@ export default class Point {
       return { point, messages };
     }
     return { point: {}, messages };
+  }
+
+  static createPointIfNotExist(arg) {
+    if (!arg) {
+      return '';
+    }
+
+    db.read();
+
+    let pointDb = db.get(TABLE).find({ id: arg }).value();
+    if (pointDb) {
+      return pointDb.id;
+    }
+
+    pointDb = db.get(TABLE).find({ name: arg }).value();
+    if (pointDb) {
+      return pointDb.id;
+    }
+
+    let point = new Point({ name: arg });
+    point = point.toJSON();
+    db.get(TABLE).push(point).write();
+    return point.id;
   }
 
   static changePoint(id, args) {
@@ -64,14 +87,14 @@ export default class Point {
       }
       return { point: {}, messages };
     }
-    return { point: {}, messages: ['No such point with this id'] };
+    return { point: {}, messages: ['Пункт не знайдено'] };
   }
 
   static removePoint(id) {
     const messages = [];
     const point = Point.findById(id).value();
     if (!point) {
-      messages.push('No such point with this id');
+      messages.push('Пункт не знайдено');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -82,7 +105,7 @@ export default class Point {
   validate() {
     const messages = [];
     if (!this.name) {
-      messages.push('Name is required!');
+      messages.push('Не вказано назву!');
     }
     return messages;
   }

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchClients, deleteClient } from '../../../actions/clients';
+import { fetchClients, deleteClient, changeClient } from '../../../actions/clients';
 
 import CatalogList from '../CatalogList';
 
@@ -17,7 +17,7 @@ const ClientsList = (props) => {
         isFetched={isFetched}
         history={props.history}
         fetch={props.fetchClients}
-        delete={props.deleteClient}
+        change={props.changeClient}
       />
     </div>
   );
@@ -31,9 +31,9 @@ ClientsList.propTypes = {
   history: PropTypes.shape({}).isRequired,
 
   fetchClients: PropTypes.func.isRequired,
-  deleteClient: PropTypes.func.isRequired,
+  changeClient: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   clients: state.clients,
-}), { fetchClients, deleteClient })(ClientsList);
+}), { fetchClients, changeClient })(ClientsList);

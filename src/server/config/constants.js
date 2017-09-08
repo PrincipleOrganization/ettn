@@ -2,7 +2,6 @@ const devConfig = {
   DATA_FILE: './data/db-dev.json',
   USER_NAME: 'dev',
   USER_PASSWORD: 'dev',
-  JWT_SECRET: 'colordog',
 };
 
 const testConfig = {
@@ -21,6 +20,7 @@ const defaultConfig = {
   PORT: process.env.PORT || 5500,
   CRYPTO_ALGORITM: 'aes-256-ctr',
   CRYPTO_PASSWORD: 'lazyfrog',
+  JWT_SECRET: 'colordog',
 };
 
 function envConfig(env) {

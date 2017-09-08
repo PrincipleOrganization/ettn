@@ -7,6 +7,8 @@ import { fetchVehicle, createVehicle, changeVehicle, deleteVehicle } from '../..
 
 import CatalogForm from '../CatalogForm';
 
+import { Types } from '../vehicles/methods';
+
 const VehicleForm = (props) => {
   const types = [
     { name: 'Автомобіль', value: 'truck' },
@@ -49,6 +51,7 @@ const VehicleForm = (props) => {
 VehicleForm.defaultProps = {
   name: '',
   type: '',
+  e: [],
   onChange: (e) => {
     e.preventDefault();
   },
@@ -64,8 +67,11 @@ const Vehicle = props => (
   <CatalogForm
     title="Транспортний Засіб"
     id={props.match.params.id}
-    blank={{ name: '', type: 'truck' }}
+    blank={{ name: '', type: Types.TRUCK }}
     data={props.vehicles.data}
+    m={props.vehicles.m}
+    e={props.vehicles.e}
+    isFetched={props.vehicles.isFetched}
     history={props.history}
     url="/vehicles"
     fetch={props.fetchVehicle}
@@ -77,11 +83,19 @@ const Vehicle = props => (
   </CatalogForm>
 );
 
+Vehicle.defaultProps = {
+  m: [],
+  e: [],
+};
+
 Vehicle.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   vehicles: PropTypes.shape({
     data: PropTypes.array.isRequired,
+    m: PropTypes.array,
+    e: PropTypes.array,
+    isFetched: PropTypes.bool.isRequired,
   }).isRequired,
 
   fetchVehicle: PropTypes.func.isRequired,

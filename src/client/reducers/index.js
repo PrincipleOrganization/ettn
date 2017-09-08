@@ -10,8 +10,19 @@ import nomenclature from './nomenclature';
 import loadingBills from './loadingBills';
 
 export const updateData = (data, record) => {
-  const newData = data.filter(item => (item.id !== record.id));
-  newData.push(record);
+  let newData = [...data];
+  let needToAdd = true;
+  for (let i = 0; i < newData.length; i += 1) {
+    if (newData[i].id === record.id) {
+      newData[i] = record;
+      needToAdd = false;
+    }
+  }
+
+  if (needToAdd) {
+    newData = [...newData, record];
+  }
+
   return newData;
 };
 

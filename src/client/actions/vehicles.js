@@ -44,10 +44,10 @@ export const fetchVehicle = id => (
         throw data.messages;
       }
       return dispatch({ type: FETCH_VEHICLE_SUCCESS, data });
-    } catch (e) {
+    } catch (m) {
       return dispatch({
         type: FETCH_VEHICLE_ERROR,
-        e,
+        m,
       });
     }
   }

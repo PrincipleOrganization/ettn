@@ -34,38 +34,26 @@ const ScaleForm = props => (
       />
     </div>
     <div className="form-group">
-      <label htmlFor="url">URL</label>
+      <label htmlFor="socketPort">Socket Port</label>
       <input
         type="text"
         className={CSS_INPUT}
-        id="url"
-        placeholder="URL"
-        name="url"
-        value={props.url}
+        id="socketPort"
+        placeholder="Socket Port"
+        name="socketPort"
+        value={props.socketPort}
         onChange={props.onChange}
       />
     </div>
     <div className="form-group">
-      <label htmlFor="socketUrl">Socket URL</label>
+    <label htmlFor="event">Event</label>
       <input
         type="text"
         className={CSS_INPUT}
-        id="socketUrl"
-        placeholder="Socket URL"
-        name="socketUrl"
-        value={props.socketUrl}
-        onChange={props.onChange}
-      />
-    </div>
-    <div className="form-group">
-      <label htmlFor="apiVersion">Api Version</label>
-      <input
-        type="text"
-        className={CSS_INPUT}
-        id="apiVersion"
-        placeholder="Api Version"
-        name="apiVersion"
-        value={props.apiVersion}
+        id="event"
+        placeholder="Event"
+        name="event"
+        value={props.event}
         onChange={props.onChange}
       />
     </div>
@@ -75,29 +63,37 @@ const ScaleForm = props => (
 ScaleForm.defaultProps = {
   name: '',
   baseUrl: '',
-  url: '',
-  socketUrl: '',
-  apiVersion: '',
+  socketPort: '',
+  event: '',
   onChange: (e) => {
     e.preventDefault();
   },
 };
 
 ScaleForm.propTypes = {
-  name: PropTypes.string,
-  baseUrl: PropTypes.string,
-  url: PropTypes.string,
-  socketUrl: PropTypes.string,
-  apiVersion: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  baseUrl: PropTypes.string.isRequired,
+  socketPort: PropTypes.string.isRequired,
+  event: PropTypes.string.isRequired,
   onChange: PropTypes.func,
+};
+
+const blank = { 
+  name: '', 
+  baseUrl: '', 
+  socketPort: '', 
+  event: '',
 };
 
 const Scale = props => (
   <CatalogForm
     title="Клієнт"
     id={props.match.params.id}
-    blank={{ name: '', baseUrl: '', url: '', socketUrl: '', apiVersion: '' }}
+    blank={blank}
     data={props.scales.data}
+    m={props.scales.m}
+    e={props.scales.e}
+    isFetched={props.scales.isFetched}
     history={props.history}
     url="/scales"
     fetch={props.fetchScale}
@@ -109,11 +105,19 @@ const Scale = props => (
   </CatalogForm>
 );
 
+Scale.defaultProps = {
+  m: [],
+  e: [],
+};
+
 Scale.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   scales: PropTypes.shape({
     data: PropTypes.array.isRequired,
+    m: PropTypes.array,
+    e: PropTypes.array,
+    isFetched: PropTypes.bool.isRequired,
   }).isRequired,
 
   fetchScale: PropTypes.func.isRequired,

@@ -20,7 +20,8 @@ import { updateData } from '.';
 
 const initialState = {
   data: [],
-  e: null,
+  e: [],
+  m: [],
   isFetched: false,
 };
 
@@ -31,29 +32,40 @@ export default (state = initialState, action) => {
     case FETCH_POINTS:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case FETCH_POINTS_ERROR:
       return {
         ...state,
         e: action.e,
         isFetched: true,
+        e: [],
+        m: [],
       };
     case FETCH_POINTS_SUCCESS:
       return {
         ...state,
         data: action.data,
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // ONE
     case FETCH_POINT:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case FETCH_POINT_ERROR:
       return {
         ...state,
-        e: action.e,
+        m: action.m,
+        e: [],
         isFetched: true,
       };
     case FETCH_POINT_SUCCESS:
@@ -61,17 +73,24 @@ export default (state = initialState, action) => {
         ...state,
         data: updateData(state.data, action.data.point),
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // CREATE
     case CREATE_POINT:
-      return state;
+      return {
+        ...state,
+        e: [],
+        m: [],
+        isFetched: false,
+      };
     case CREATE_POINT_ERROR:
       return {
         ...state,
         isFetched: true,
         e: action.e,
-        data: state.data.filter(element => element.id !== action.data.point.id),
+        m: [],
       };
     case CREATE_POINT_SUCCESS:
       return {
@@ -80,17 +99,24 @@ export default (state = initialState, action) => {
           ...state.data,
           action.data.point,
         ],
+        e: [],
+        m: [],
+        isFetched: true,
       };
 
     // CHANGE
     case CHANGE_POINT:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case CHANGE_POINT_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
         isFetched: true,
       };
     case CHANGE_POINT_SUCCESS:
@@ -98,22 +124,32 @@ export default (state = initialState, action) => {
         ...state,
         data: updateData(state.data, action.data.point),
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // DELETE
     case DELETE_POINT:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case DELETE_POINT_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
+        isFetched: true,
       };
     case DELETE_POINT_SUCCESS:
       return {
         ...state,
         data: state.data.filter(element => element.id !== action.id),
+        e: [],
+        m: [],
+        isFetched: true,
       };
 
     default:

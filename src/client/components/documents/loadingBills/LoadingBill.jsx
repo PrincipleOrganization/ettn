@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import uuid from 'uuid';
 import { connect } from 'react-redux';
 
-import { catalogs, format, Auth } from '../../../utils';
+import { catalogs, format, dialog, Auth } from '../../../utils';
 import { CSS_OBJECT_HEADER, CSS_INPUT } from '../../../constants';
 
-import { Field, FormTable } from '../../elements';
-import WeighingModalForm from './WeighingModalForm';
+import { Field, FormTable, Spinner, Icon } from '../../elements';
+import { SmartScales, getMainScales } from '../../catalogs/scales/methods';
 
 import { fetchUsers } from '../../../actions/users';
-import { fetchLoadingBill, createLoadingBill, changeLoadingBill, deleteLoadingBill } from '../../../actions/loadingBills';
+import { fetchLoadingBill, createLoadingBill, changeLoadingBill } from '../../../actions/loadingBills';
 import { fetchPoints } from '../../../actions/points';
 import { fetchClients } from '../../../actions/clients';
 import { fetchDrivers } from '../../../actions/drivers';
@@ -18,11 +18,22 @@ import { fetchVehicles } from '../../../actions/vehicles';
 import { fetchScales } from '../../../actions/scales';
 import { fetchNomenclature } from '../../../actions/nomenclature';
 
+import { Types, deleteDialog } from '../methods';
+
 const blankDate = new Date();
+
+const currentUser = () => {
+  const user = Auth.getUser();
+  if (user) {
+    return user.id;
+  }
+  return '';
+};
 
 const blank = {
   number: '',
   createdAt: blankDate,
+  type: Types.INCOME,
   verified: false,
   vehicle: '',
   trailer: '',
@@ -39,8 +50,13 @@ const blank = {
   grossDate: blankDate,
   taraDate: blankDate,
   netDate: blankDate,
+  grossScale: '',
+  taraScale: '',
+  grossOperator: '',
+  taraOperator: '',
+  netOperator: '',
   goods: [],
-  author: '',
+  author: currentUser(),
   comment: '',
 };
 
@@ -54,6 +70,8 @@ const getData = (list, id) => {
 };
 
 const WeightField = ({
+  noScale,
+  noButton,
   title,
   value,
   valueId,
@@ -63,48 +81,191 @@ const WeightField = ({
   datePlaceholder,
   readOnly,
   readOnlyDate,
+  titleScale,
+  scaleId,
+  valueScale,
+  titleOperator,
+  operatorId,
+  valueOperator,
+  readOnlyOperator,
+  operatorValue,
+  documentNumber,
+  vehicleValue,
+  valueWeight = 0,
+  show,
   onChange,
-}) => (
-  <div className="form-group">
+  onClickWeight,
+  onTitleClick,
+}) => {
+  let scale = (
     <Field
-      title={title}
-      name={valueId}
-      type={'datetime'}
-      readOnly={readOnly}
-      placeholder={title}
-      value={value}
-      width={1}
+      title={titleScale}
+      name={scaleId}
+      type={'text'}
+      placeholder={titleScale}
+      value={valueScale}
+      width={4}
+      selectButton
+      readOnly
+      selector="catalogs"
+      table="scales"
       onChange={onChange}
     />
+  );
 
-    <Field
-      title={dateTitle}
-      name={dateId}
-      type={'datetime'}
-      readOnly={readOnlyDate}
-      placeholder={datePlaceholder}
-      value={date}
-      width={2}
-      datetime
-      onChange={onChange}
-    />
-  </div>
-);
+  if (noScale) {
+    scale = null;
+  }
+
+  let button = (
+    <div className="col-sm-8">
+      <label htmlFor={`${scaleId}_weight_board`}>На вагах</label>
+      <div className="input-group">
+        <input
+          type="text"
+          className={CSS_INPUT}
+          readOnly
+          id={`${scaleId}_weight_board`}
+          placeholder="0"
+          name={`${scaleId}_weight_board`}
+          value={valueWeight}
+        />
+        <span className="input-group-btn">
+          <button
+            className="btn btn-default btn-sm"
+            type="button"
+            onClick={onClickWeight}
+          >
+            <Icon.Scale />
+            Внести
+          </button>
+        </span>
+      </div>
+    </div>
+  );
+
+  if (noButton) {
+    button = null;
+  }
+
+  let footer = null;
+  if (button && scale) {
+    footer = (
+      <div className="form-group">
+        {scale}
+        {button}
+      </div>
+    );
+  }
+
+  let elements = null;
+  if (show) {
+    elements = (
+      <div>
+        <div className="form-group">
+          <Field
+            title="Вага"
+            name={valueId}
+            type={'number'}
+            readOnly={readOnly}
+            placeholder={title}
+            value={value}
+            width={2}
+            onChange={onChange}
+          />
+  
+          <Field
+            title={dateTitle}
+            name={dateId}
+            type={'datetime'}
+            readOnly={readOnlyDate}
+            placeholder={datePlaceholder}
+            value={date}
+            width={2}
+            datetime
+            onChange={onChange}
+          />
+  
+          <Field
+            title={titleOperator}
+            name={operatorId}
+            type={'text'}
+            placeholder={titleOperator}
+            value={valueOperator}
+            width={8}
+            selectButton={!readOnlyOperator}
+            readOnly
+            selector="catalogs"
+            table="users"
+            onChange={onChange}
+          />
+        </div>
+        {footer}
+      </div>
+    );
+  }
+
+  const lastChild = (valueId === 'net') ? 'no-border' : '';
+  const icon = (show) ? <Icon.CaretUp /> : <Icon.CaretDown />;
+
+  let mainTitle = <p onClick={onTitleClick}>{icon} {title}</p>;
+  if (!show) {
+    let fastWeight = null;
+    if (valueId !== 'net') {
+      fastWeight = (
+        <div>
+          <a className="pull-right btn-fast-weight" onClick={onClickWeight} role="button">Внести</a>
+          <p className="pull-right">{`На вагах: ${valueWeight}`}</p>
+        </div>
+      );
+    }
+    mainTitle = (
+      <div className="clearfix">
+        <p
+          className="pull-left"
+          onClick={onTitleClick}
+        >
+          {icon} {`${title}: ${value} - від: ${format.formatDate(date)}`}
+        </p>
+        {fastWeight}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`weight-elems ${lastChild}`}>
+      <div className="weight-elems-container">
+        {mainTitle}
+        {elements}
+      </div>
+    </div>
+  );
+};
 
 class LoadingBill extends Component {
   constructor(props) {
     super(props);
 
     const id = this.props.match.params.id;
+    
+    this.url = '/loadingBills';
 
     this.params = {
       new: !id,
       reread: !!id,
       modified: false,
+      ready: false,
       data: blank,
       nomenclature: {
         activeRow: null,
       },
+      grossScale: null,
+      taraScale: null,
+      grossWeight: 0,
+      taraWeight: 0,
+      showGross: false,
+      showTara: false,
+      showNet: false,
     };
 
     this.refresh = this.refresh.bind(this);
@@ -120,13 +281,31 @@ class LoadingBill extends Component {
     this.handleNomeclatureRowOnChange = this.handleNomeclatureRowOnChange.bind(this);
     this.handleWeight = this.handleWeight.bind(this);
     this.calculateNet = this.calculateNet.bind(this);
+    this.updateFastWeight = this.updateFastWeight.bind(this);
+    this.updateScale = this.updateScale.bind(this);
+    this.updateAllScale = this.updateAllScale.bind(this);
+    this.handleFastWeight = this.handleFastWeight.bind(this);
+    this.handleType = this.handleType.bind(this);
+    this.disconnectFromAllScales = this.disconnectFromAllScales.bind(this);
+    this.goBack = this.goBack.bind(this);
+    this.toggleScaleBoard = this.toggleScaleBoard.bind(this);
+    this.fillScale = this.fillScale.bind(this);
   }
 
-  componentDidMount() {
-    this.refresh();
+  async componentDidMount() {
+    this.params.ready = true;
+    await this.refresh();
   }
 
-  refresh() {
+  componentWillUnmount() {
+    this.disconnectFromAllScales();
+  }
+
+  goBack() {
+    this.props.history.push(this.url);
+  }
+
+  async refresh() {
     this.props.fetchUsers();
     this.props.fetchDrivers();
     this.props.fetchPoints();
@@ -135,7 +314,7 @@ class LoadingBill extends Component {
     this.props.fetchNomenclature();
     this.props.fetchScales();
     if (!this.params.new) {
-      this.props.fetchLoadingBill(this.props.match.params.id);
+      await this.props.fetchLoadingBill(this.props.match.params.id);
     }
   }
 
@@ -147,8 +326,8 @@ class LoadingBill extends Component {
     }
   }
 
-  reread() {
-    this.refresh();
+  async reread() {
+    await this.refresh();
     this.params.reread = true;
     this.params.modified = false;
     this.forceUpdate();
@@ -168,54 +347,72 @@ class LoadingBill extends Component {
 
   handleWeight(name) {
     if (name === 'gross') {
-      this.grossDate = new Date();
+      this.params.data.grossDate = new Date();
+      this.params.data.grossOperator = currentUser();
       this.calculateNet();
     } else if (name === 'tara') {
-      this.taraDate = new Date();
+      this.params.data.taraDate = new Date();
+      this.params.data.taraOperator = currentUser();
       this.calculateNet();
     } else if (name === 'net') {
       this.params.data.tara = this.params.data.gross - this.params.data.net;
       this.params.data.taraDate = new Date();
+      this.params.data.taraOperator = currentUser();
+    } else if (name === 'grossScale') {
+      this.updateScale('grossScale');
+    } else if (name === 'taraScale') {
+      this.updateScale('taraScale');
     }
   }
 
   calculateNet() {
     this.params.data.net = this.params.data.gross - this.params.data.tara;
     this.params.data.netDate = new Date();
+    this.params.data.netOperator = currentUser();
   }
 
   handleSave(close = false, verified = false) {
     if (this.params.new) {
       const payload = {
         ...this.params.data,
-        verified,
+        verified: this.params.data.verified || verified,
         id: uuid(),
       };
       this.props.createLoadingBill(payload);
-      this.props.history.replace(`/loadingBills/${payload.id}`);
+      this.props.history.replace(`${this.url}/${payload.id}`);
       this.params.new = false;
       this.params.reread = true;
     } else {
-      this.props.changeLoadingBill(this.props.match.params.id, { ...this.params.data, verified });
+      this.props.changeLoadingBill(
+        this.props.match.params.id, 
+        { 
+          ...this.params.data, 
+          verified: this.params.data.verified || verified, 
+        },
+      );
     }
 
     if (close) {
       this.props.history.goBack();
     } else {
       this.params.modified = false;
+      this.forceUpdate();
     }
   }
 
-  handleClose(e) {
-    e.preventDefault();
-    this.props.history.goBack();
+  handleClose() {
+    if (this.params.modified) {
+      dialog.showOnCloseDialog(this.goBack);
+    } else {
+      this.goBack();
+    }
   }
 
-  handleDelete(e) {
-    e.preventDefault();
+  async handleDelete() {
     if (!this.params.new) {
-      this.props.deleteLoadingBill(this.props.match.params.id);
-      this.props.history.goBack();
+      this.params.data.mark = !this.params.data.mark;
+      this.params.verified = false;
+      await this.handleSave();
     }
   }
 
@@ -253,18 +450,112 @@ class LoadingBill extends Component {
     this.forceUpdate();
   }
 
-  render() {
-    const userIsAdmin = Auth.userIsAdmin();
+  disconnectFromAllScales() {
+    this.disconnectFromScales(this.params.grossScale);
+    this.disconnectFromScales(this.params.taraScale);
+    delete this.params.grossScale;
+    delete this.params.taraScale;
+  }
 
-    if (this.params.reread && !this.params.new && this.props.loadingBills.isFetched) {
-      this.updateParams();
+  disconnectFromScales(scales, name) {
+    if (scales) {
+      this.params[name] = 0;
+      scales.disconnect();
+    }
+  }
+
+  fillScale(name) {
+    this.params.data[name] = getMainScales();
+  }
+
+  updateAllScale() {
+    this.updateScale('grossScale');
+    this.updateScale('taraScale');
+  }
+
+  updateScale(name) {
+    if (this.params.ready) {
+      const field = (name === 'grossScale') ? 'grossWeight' : 'taraWeight';
+
+      this.disconnectFromScales(this.params[name], field);
+      delete this.params[name];
+
+      let sc = this.params.data[name];
+      if (!sc) {
+        this.fillScale(name);
+        sc = this.params.data[name];
+      }
+      if (sc) {
+        const scaleValue = catalogs.getCatalogValueById(this.props.scales.data, sc);
+        if (scaleValue) {
+          this.params[name] = new SmartScales(scaleValue);
+          this.params[name].connect((weight) => { this.updateFastWeight(field, weight); });
+        }
+      }
+    }
+  }
+
+  updateFastWeight(name, weight) {
+    this.params[name] = weight;
+    this.forceUpdate();
+  }
+
+  handleFastWeight(name, dataName) {
+    this.params.data[dataName] = this.params[name];
+    this.handleWeight(dataName);
+    this.forceUpdate();
+  }
+
+  handleType(type) {
+    this.params.data.type = type;
+    this.forceUpdate();
+  }
+
+  toggleScaleBoard(scale) {
+    if (scale === 'gross') {
+      this.params.showGross = !this.params.showGross;
+    } else if (scale === 'tara') {
+      this.params.showTara = !this.params.showTara;
+    } else if (scale === 'net') {
+      this.params.showNet = !this.params.showNet;
+    }
+    this.forceUpdate();
+  }
+
+  render() {
+    const haveErrors = this.props.loadingBills.m.length !== 0;
+    if (haveErrors) {
+      dialog.showError(this.props.loadingBills.m, this.goBack);
     }
 
-    let elementToRender = 'Loading...';
-    if (!this.params.reread) {
+    const userIsAdmin = Auth.userIsAdmin();
+
+    const isFetched = this.props.loadingBills.isFetched 
+      && this.props.scales.isFetched
+      && this.props.nomenclature.isFetched
+      && this.props.clients.isFetched
+      && this.props.vehicles.isFetched
+      && this.props.drivers.isFetched
+      && this.props.users.isFetched
+      && this.props.points.isFetched;
+    if (this.params.ready && this.params.reread && !this.params.new && isFetched && !haveErrors) {
+      this.updateParams();
+      this.updateAllScale();
+    } else if (this.params.ready && this.params.new && this.props.scales.isFetched && !haveErrors) {
+      if (!this.params.grossScale) {
+        this.updateScale('grossScale');
+      }
+      if (!this.params.taraScale) {
+        this.updateScale('taraScale');
+      }
+    }
+
+    let elementToRender = <Spinner />;
+    if (!this.params.reread && !haveErrors) {
       let {
         number,
         createdAt,
+        type,
         verified,
         vehicle,
         trailer,
@@ -281,9 +572,15 @@ class LoadingBill extends Component {
         grossDate,
         taraDate,
         netDate,
+        grossScale,
+        taraScale,
+        grossOperator,
+        taraOperator,
+        netOperator,
         goods,
         author,
         comment,
+        mark,
       } = this.params.data;
 
       driver = catalogs.getCatalogNameById(this.props.drivers.data, driver);
@@ -294,7 +591,11 @@ class LoadingBill extends Component {
       sender = catalogs.getCatalogNameById(this.props.clients.data, sender);
       recipient = catalogs.getCatalogNameById(this.props.clients.data, recipient);
       shippingPoint = catalogs.getCatalogNameById(this.props.points.data, shippingPoint);
-      scale = catalogs.getCatalogNameById(this.props.scales.data, scale);
+      grossScale = catalogs.getCatalogNameById(this.props.scales.data, grossScale);
+      taraScale = catalogs.getCatalogNameById(this.props.scales.data, taraScale);
+      grossOperator = catalogs.getCatalogNameById(this.props.users.data, grossOperator);
+      taraOperator = catalogs.getCatalogNameById(this.props.users.data, taraOperator);
+      netOperator = catalogs.getCatalogNameById(this.props.users.data, netOperator);
       author = catalogs.getCatalogNameById(this.props.users.data, author);
 
       grossDate = grossDate || blankDate;
@@ -316,6 +617,24 @@ class LoadingBill extends Component {
         }
       ));
 
+      const { grossWeight, taraWeight, showGross, showNet, showTara } = this.params;
+
+      let rereadButton = null;
+      if (!this.params.new) {
+        rereadButton = (
+          <li>
+            <a
+              role="button"
+              className={this.params.new ? 'disabled' : ''}
+              onClick={this.reread}
+            >
+              <Icon.Refresh />
+              Перечитати
+            </a>
+          </li>
+        );
+      }
+
       const toolbar = (
         <div className="btn-toolbar object-toolbar clearfix" role="toolbar">
           <div className="btn-group btn-group-sm pull-left" role="group">
@@ -324,6 +643,7 @@ class LoadingBill extends Component {
               className="btn btn-primary"
               onClick={() => this.handleSave(true)}
             >
+              <Icon.SaveClose />
               Зберегти та закрити
             </button>
             <button
@@ -331,6 +651,7 @@ class LoadingBill extends Component {
               className="btn btn-default"
               onClick={() => this.handleSave()}
             >
+              <Icon.Save />
               Зберегти
             </button>
           </div>
@@ -341,6 +662,7 @@ class LoadingBill extends Component {
               className="btn btn-default"
               onClick={() => this.handleSave(false, true)}
             >
+              <Icon.Verified />
               Підтвердити
             </button>
           </div>
@@ -357,8 +679,8 @@ class LoadingBill extends Component {
               <span className="caret" />
             </button>
             <ul className="dropdown-menu">
-              <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={this.handleDelete}>Видалити</a></li>
-              <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={this.reread}>Перечитати</a></li>
+              <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={() => { deleteDialog(this, mark, false); }}><Icon.Remove />Видалити</a></li>
+              {rereadButton}
             </ul>
           </div>
 
@@ -385,7 +707,7 @@ class LoadingBill extends Component {
               readOnly={!userIsAdmin}
               placeholder={'Номер'}
               value={number}
-              width={1}
+              width={2}
             />
 
             {/* Date */}
@@ -399,7 +721,30 @@ class LoadingBill extends Component {
               width={2}
               datetime
               onChange={this.handleInputChange}
+              onClick={this.disconnectFromAllScales}
+              onBlur={this.updateAllScale}
             />
+
+            <div className="col-xs-12 col-sm-6">
+              <label htmlFor="loading-bill-type-selector">Вид</label>
+              <br />
+              <div className="btn-group btn-group-sm" role="group" id="loading-bill-type-selector">
+                <button
+                  type="button"
+                  className={`btn btn-default loading-bill-type-selector ${type === Types.INCOME ? 'active' : ''}`}
+                  onClick={() => this.handleType(Types.INCOME)}
+                >
+                  Прихід
+                </button>
+                <button
+                  type="button"
+                  className={`btn btn-default loading-bill-type-selector ${type === Types.OUTCOME ? 'active' : ''}`}
+                  onClick={() => this.handleType(Types.OUTCOME)}
+                >
+                  Відвантаження
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -414,7 +759,7 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Водій'}
               value={driver}
-              width={11}
+              width={12}
               selectButton
               selector="catalogs"
               table="drivers"
@@ -423,13 +768,14 @@ class LoadingBill extends Component {
           </div>
 
           <div className="form-group">
+            {/* Vehicle */}
             <Field
-              title={'ТЗ'}
+              title={'Транспортний Засіб'}
               name={'vehicle'}
               type={'text'}
-              placeholder={'ТЗ'}
+              placeholder={'Транспортний Засіб'}
               value={vehicle}
-              width={5}
+              width={6}
               selectButton
               selector="catalogs"
               table="vehicles"
@@ -443,10 +789,10 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Причеп'}
               value={trailer}
-              width={5}
+              width={6}
               selectButton
               selector="catalogs"
-              table="vehicles"
+              table="vehiclesSecondary"
               onChange={this.handleInputChange}
             />
           </div>
@@ -459,7 +805,7 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Перевізник'}
               value={carrier}
-              width={5}
+              width={6}
               selectButton
               selector="catalogs"
               table="clients"
@@ -473,7 +819,7 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Замовник'}
               value={customer}
-              width={5}
+              width={6}
               selectButton
               selector="catalogs"
               table="clients"
@@ -489,7 +835,7 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Відправник'}
               value={sender}
-              width={5}
+              width={6}
               selectButton
               selector="catalogs"
               table="clients"
@@ -503,7 +849,7 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Отримувач'}
               value={recipient}
-              width={5}
+              width={6}
               selectButton
               selector="catalogs"
               table="clients"
@@ -519,7 +865,7 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Пункт погрузки'}
               value={shippingPoint}
-              width={11}
+              width={12}
               selectButton
               selector="catalogs"
               table="points"
@@ -546,72 +892,80 @@ class LoadingBill extends Component {
 
       const bodyWeight = (
         <div>
-          <div>
-            <div className="form-group">
-              <Field
-                title={'Ваги'}
-                name={'scale'}
-                type={'text'}
-                placeholder={'Ваги'}
-                value={scale}
-                width={4}
-                selectButton
-                readOnly={!userIsAdmin}
-                selector="catalogs"
-                table="scales"
-                onChange={this.handleInputChange}
-              />
+          <WeightField
+            title="Брутто"
+            value={gross}
+            valueId="gross"
+            date={grossDate}
+            dateId="grossDate"
+            dateTitle="Дата"
+            readOnly={!userIsAdmin}
+            readOnlyDate={!userIsAdmin}
+            datePlaceholder="Дата брутто"
+            titleScale="Ваги"
+            scaleId="grossScale"
+            valueScale={grossScale}
+            titleOperator="Оператор"
+            operatorId="grossOperator"
+            valueOperator={grossOperator}
+            readOnlyOperator={!userIsAdmin}
+            operatorValue={grossOperator}
+            documentNumber={number}
+            vehicleValue={vehicle}
+            valueWeight={grossWeight}
+            show={showGross}
+            onChange={this.handleInputChange}
+            onClickWeight={() => { this.handleFastWeight('grossWeight', 'gross'); }}
+            onTitleClick={() => { this.toggleScaleBoard('gross'); }}
+          />
 
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                data-toggle="modal"
-                data-target="#getWeight_modal"
-              >
-                Зважити
-              </button>
+          <WeightField
+            title="Тара"
+            value={tara}
+            valueId="tara"
+            date={taraDate}
+            dateId="taraDate"
+            dateTitle="Дата"
+            readOnly={!userIsAdmin}
+            readOnlyDate={!userIsAdmin}
+            datePlaceholder="Дата тари"
+            titleScale="Ваги"
+            scaleId="taraScale"
+            valueScale={taraScale}
+            titleOperator="Оператор"
+            operatorId="taraOperator"
+            valueOperator={taraOperator}
+            readOnlyOperator={!userIsAdmin}
+            operatorValue={taraOperator}
+            documentNumber={number}
+            vehicleValue={vehicle}
+            valueWeight={taraWeight}
+            show={showTara}
+            onChange={this.handleInputChange}
+            onClickWeight={() => { this.handleFastWeight('taraWeight', 'tara'); }}
+            onTitleClick={() => { this.toggleScaleBoard('tara'); }}
+          />
 
-              <WeighingModalForm id="getWeight_modal" scale={scale} />
-            </div>
-          </div>
-          <div>
-            <WeightField
-              title="Брутто"
-              value={gross}
-              valueId="gross"
-              date={grossDate}
-              dateId="grossDate"
-              dateTitle="Дата брутто"
-              readOnlyDate={!userIsAdmin}
-              datePlaceholder="Дата брутто"
-              onChange={this.handleInputChange}
-            />
-
-            <WeightField
-              title="Тара"
-              value={tara}
-              valueId="tara"
-              date={taraDate}
-              dateId="taraDate"
-              dateTitle="Дата тари"
-              readOnlyDate={!userIsAdmin}
-              datePlaceholder="Дата тари"
-              onChange={this.handleInputChange}
-            />
-
-            <WeightField
-              title="Нетто"
-              value={net}
-              valueId="net"
-              date={netDate}
-              dateTitle="Дата нетто"
-              readOnly={!userIsAdmin}
-              readOnlyDate={!userIsAdmin}
-              dateId="netDate"
-              datePlaceholder="Дата нетто"
-              onChange={this.handleInputChange}
-            />
-          </div>
+          <WeightField
+            noScale
+            noButton
+            title="Нетто"
+            value={net}
+            valueId="net"
+            date={netDate}
+            dateTitle="Дата"
+            readOnly={!userIsAdmin}
+            readOnlyDate={!userIsAdmin}
+            dateId="netDate"
+            datePlaceholder="Дата нетто"
+            titleOperator="Оператор"
+            operatorId="netOperator"
+            valueOperator={netOperator}
+            readOnlyOperator={!userIsAdmin}
+            show={showNet}
+            onChange={this.handleInputChange}
+            onTitleClick={() => { this.toggleScaleBoard('net'); }}
+          />
         </div>
       );
 
@@ -649,7 +1003,7 @@ class LoadingBill extends Component {
               type={'text'}
               placeholder={'Коментар'}
               value={comment}
-              width={11}
+              width={12}
               onChange={this.handleInputChange}
             />
           </div>
@@ -660,11 +1014,11 @@ class LoadingBill extends Component {
               title={'Автор'}
               name={'author'}
               type={'text'}
-              readOnly={!userIsAdmin}
+              readOnly
               placeholder={'Автор'}
               value={author}
-              width={11}
-              selectButton
+              width={12}
+              selectButton={userIsAdmin}
               selector="catalogs"
               table="users"
               onChange={this.handleInputChange}
@@ -673,9 +1027,16 @@ class LoadingBill extends Component {
         </div>
       );
 
+      let icon = null;
+      if (mark) {
+        icon = <Icon.MarkToRemove />;
+      } else if (verified) {
+        icon = (<Icon.Check />);
+      }
+
       elementToRender = (
         <div>
-          <p className={CSS_OBJECT_HEADER}>{title}</p>
+          <p className={CSS_OBJECT_HEADER}>{icon} {title}</p>
 
           <form className="form-horizontal">
             {toolbar}
@@ -714,6 +1075,5 @@ export default connect(state => ({
   fetchScales,
   fetchLoadingBill,
   createLoadingBill,
-  deleteLoadingBill,
   changeLoadingBill,
 })(LoadingBill);

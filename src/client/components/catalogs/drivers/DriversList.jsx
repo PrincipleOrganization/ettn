@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchDrivers, deleteDriver } from '../../../actions/drivers';
+import { fetchDrivers, changeDriver } from '../../../actions/drivers';
 
 import CatalogList from '../CatalogList';
 
@@ -17,7 +17,7 @@ const DriversList = (props) => {
         history={props.history}
         isFetched={isFetched}
         fetch={props.fetchDrivers}
-        delete={props.deleteDriver}
+        change={props.changeDriver}
       />
     </div>
   );
@@ -31,9 +31,9 @@ DriversList.propTypes = {
   history: PropTypes.shape({}).isRequired,
 
   fetchDrivers: PropTypes.func.isRequired,
-  deleteDriver: PropTypes.func.isRequired,
+  changeDriver: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   drivers: state.drivers,
-}), { fetchDrivers, deleteDriver })(DriversList);
+}), { fetchDrivers, changeDriver })(DriversList);

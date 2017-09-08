@@ -8,11 +8,11 @@ body {
 }
 
 .login-page {
-  margin-left: 40%;
-  margin-right: 40%;
-
-  h2 {
-    text-align: center;
+  img {
+    height: 180px;
+    display: block;
+    margin: auto;
+    transform: rotate(-3deg);
   }
 
   form {
@@ -22,6 +22,10 @@ body {
       width: 100%;
     }
   }
+}
+
+.table-toolbar {
+  margin: 0;
 }
 
 .object-title {
@@ -92,6 +96,149 @@ body {
   .tab-content{
     margin: 5px;
   }
+}
+
+.weight-board {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.icon {
+  margin-right: 5px;
+
+  &.no-right-margin {
+    margin-right: 0;
+  }
+}
+
+.not-found {
+  margin-top: 30px;
+  font-weight: bold;
+
+  h1 {
+    color: $brand-primary;
+  }
+}
+
+.spinner {
+  margin: auto;
+  width: 60px;
+  margin-top: 50px;
+}
+
+.weight-elems {
+  margin-bottom: 15px;
+  margin-left: -5px;
+  margin-right: -5px;
+  border-bottom: 1px solid $nav-tabs-border-color;
+  
+  p {
+    font-weight: bold;
+    cursor: default,
+  }
+
+  .weight-elems-container {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  &.no-border {
+    margin-left: 0;
+    margin-right: 0;
+    border-bottom: none;
+
+    .weight-elems-container {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  .btn-fast-weight {
+    margin-left: 15px;
+    line-height: 1.5;
+  }
+}
+
+.react-bootstrap-table-page-btns-ul {
+  &.pagination {
+    margin: 0 0 10px 0;
+
+    .page-item.active {
+      .page-link {
+        background-color: $brand-primary;
+        border-color: $brand-primary;
+        color: white;
+      }
+    }
+    .page-item {
+      .page-link {
+        color: $link-color;
+      }
+    }
+  }
+}
+
+.btn {
+  &.btn-primary {
+    border-color: $brand-primary;
+    color: white;
+  }
+}
+
+.fast-view {
+  background-color: white;
+  margin: -10px;
+  padding: 10px;
+
+  .fast-view-field {
+    margin: 5px 0;
+  }
+}
+
+.settings-list {
+  padding-left: 0;
+
+  li {
+    list-style: none;
+    margin: 15px 0;
+  }
+}
+
+.elements-cleaner {
+  margin-bottom: 20px;
+}
+
+.settings-icon {
+  width: 20px;
+  
+  .fa {
+    width: inherit;
+    text-align: center;
+  }
+}
+
+.notification-list {
+  position: relative;
+  z-index: 100;
+}
+
+.notification-bar {
+  background-color: $navbar-default-bg !important;
+
+  .notification-bar-wrapper {
+    font-size: 14px;
+  
+    .notification-bar-action {
+      font-size: inherit !important;
+      color: $brand-primary !important;
+    }
+  }
+}
+
+.loading-bill-type-selector {
+  width: 120px;
 }
 
 /*

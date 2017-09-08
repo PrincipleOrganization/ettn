@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchVehicles, deleteVehicle } from '../../../actions/vehicles';
+import { fetchVehicles, changeVehicle } from '../../../actions/vehicles';
 
 import CatalogList from '../CatalogList';
 
@@ -17,7 +17,7 @@ const VehiclesList = (props) => {
         isFetched={isFetched}
         history={props.history}
         fetch={props.fetchVehicles}
-        delete={props.deleteVehicle}
+        change={props.changeVehicle}
       />
     </div>
   );
@@ -31,9 +31,9 @@ VehiclesList.propTypes = {
   history: PropTypes.shape({}).isRequired,
 
   fetchVehicles: PropTypes.func.isRequired,
-  deleteVehicle: PropTypes.func.isRequired,
+  changeVehicle: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   vehicles: state.vehicles,
-}), { fetchVehicles, deleteVehicle })(VehiclesList);
+}), { fetchVehicles, changeVehicle })(VehiclesList);

@@ -42,6 +42,9 @@ const Nomenclature = props => (
     id={props.match.params.id}
     blank={{ name: '' }}
     data={props.nomenclature.data}
+    m={props.nomenclature.m}
+    e={props.nomenclature.e}
+    isFetched={props.nomenclature.isFetched}
     history={props.history}
     url="/nomenclature"
     fetch={props.fetchOneNomenclature}
@@ -53,11 +56,19 @@ const Nomenclature = props => (
   </CatalogForm>
 );
 
+Nomenclature.defaultProps = {
+  m: [],
+  e: [],
+};
+
 Nomenclature.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   nomenclature: PropTypes.shape({
     data: PropTypes.array.isRequired,
+    m: PropTypes.array.isRequired,
+    e: PropTypes.array,
+    isFetched: PropTypes.bool.isRequired,
   }).isRequired,
 
   fetchOneNomenclature: PropTypes.func.isRequired,

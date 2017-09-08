@@ -44,10 +44,10 @@ export const fetchDriver = id => (
         throw data.messages;
       }
       return dispatch({ type: FETCH_DRIVER_SUCCESS, data });
-    } catch (e) {
+    } catch (m) {
       return dispatch({
         type: FETCH_DRIVER_ERROR,
-        e,
+        m,
       });
     }
   }

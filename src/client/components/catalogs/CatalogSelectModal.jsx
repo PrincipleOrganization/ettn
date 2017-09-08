@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { CSS_TABLE_CLASS } from '../../constants';
 
-import { Modal } from '../elements';
+import { Modal, Spinner } from '../elements';
 
 class CatalogSelectModal extends Component {
   constructor(props) {
@@ -36,21 +36,43 @@ class CatalogSelectModal extends Component {
   }
 
   render() {
-    let elementToRender = 'Loading...';
+    let elementToRender = <Spinner />;
 
-    const { isFetched, data, title, id } = this.props;
+    const { isFetched, data, title, id, pick } = this.props;
 
     if (isFetched) {
-      const rows = data.map(item => (
-        <tr
-          key={item.id}
-          className={this.state.activeRow === item.id ? 'active' : ''}
-          onClick={() => this.handleClick(item.id)}
-          onDoubleClick={this.selectItem}
-        >
-          <td>{item.name}</td>
-        </tr>
-      ));
+      const rows = data.map((item) => {
+        let row = (
+          <tr
+            key={item.id}
+            className={this.state.activeRow === item.id ? 'active' : ''}
+            onClick={() => this.handleClick(item.id)}
+            onDoubleClick={this.selectItem}
+          >
+            <td>{item.name}</td>
+          </tr>
+        );
+        let valid = false;
+
+        if (pick) {
+          const keys = Object.keys(pick);
+          for (let i = 0; i < keys.length; i += 1) {
+            const key = keys[i];
+            const values = pick[key];
+            for (let j = 0; j < values.length; j += 1) {
+              if (item[key] === values[j]) {
+                valid = true;
+              }
+            }
+          }
+        }
+        
+        if (pick && !valid) {
+          row = null;
+        }
+
+        return row;
+      });
 
       elementToRender = (
         <Modal title={title} id={id}>
@@ -80,6 +102,10 @@ class CatalogSelectModal extends Component {
   }
 }
 
+CatalogSelectModal.defaultProps = {
+  pick: null,
+};
+
 CatalogSelectModal.propTypes = {
   title: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
@@ -89,6 +115,7 @@ CatalogSelectModal.propTypes = {
     name: PropTypes.string.isRequired,
   })).isRequired,
   isFetched: PropTypes.bool.isRequired,
+  pick: PropTypes.shape({}),
 
   fetch: PropTypes.func.isRequired,
   select: PropTypes.func.isRequired,

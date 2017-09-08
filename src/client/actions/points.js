@@ -44,10 +44,10 @@ export const fetchPoint = id => (
         throw data.messages;
       }
       return dispatch({ type: FETCH_POINT_SUCCESS, data });
-    } catch (e) {
+    } catch (m) {
       return dispatch({
         type: FETCH_POINT_ERROR,
-        e,
+        m,
       });
     }
   }

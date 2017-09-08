@@ -12,9 +12,8 @@ class Scale {
     this.id = args.id || uuid();
     this.name = args.name;
     this.baseUrl = args.baseUrl;
-    this.url = args.url;
-    this.socketUrl = args.socketUrl;
-    this.apiVersion = args.apiVersion || '2.0';
+    this.socketPort = args.socketPort;
+    this.event = args.event;
     this.slug = slug(this.name);
     this.mark = args.mark || false;
   }
@@ -34,7 +33,7 @@ class Scale {
     if (scale) {
       return { scale, messages: [] };
     }
-    return { scale: {}, messages: ['No such scale with this id'] };
+    return { scale: {}, messages: ['Ваги не знайдено'] };
   }
 
   static createScale(args) {
@@ -42,7 +41,7 @@ class Scale {
 
     const scaleDb = db.get(TABLE).find({ name: args.name }).value();
     if (scaleDb) {
-      return { scale: {}, messages: ['Scale with this name exists'] };
+      return { scale: {}, messages: ['Ваги з таким іменем вже існують'] };
     }
 
     let scale = new Scale({ ...args });
@@ -68,14 +67,14 @@ class Scale {
       }
       return { scale: {}, messages };
     }
-    return { scale: {}, messages: ['No such scale with this id'] };
+    return { scale: {}, messages: ['Ваги не знайдено'] };
   }
 
   static removeScale(id) {
     const messages = [];
     const scale = Scale.findById(id).value();
     if (!scale) {
-      messages.push('No such scale with this id');
+      messages.push('Ваги не знайдено');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -86,16 +85,16 @@ class Scale {
   validate() {
     const messages = [];
     if (!this.name) {
-      messages.push('Name is required!');
+      messages.push('Не вказано назву!');
     }
     if (!this.baseUrl) {
-      messages.push('Base Url is required!');
+      messages.push('Не вказано BaseUrl!');
     }
-    if (!this.url) {
-      messages.push('Url is required!');
+    if (!this.socketPort) {
+      messages.push('Не вказано SocketPort!');
     }
-    if (!this.socketUrl) {
-      messages.push('Socket Url is required!');
+    if (!this.event) {
+      messages.push('Не вказано Event!');
     }
     return messages;
   }

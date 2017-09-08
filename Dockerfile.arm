@@ -1,0 +1,20 @@
+FROM ioft/armhf-ubuntu:16.04
+
+MAINTAINER Princip <principle.main@gmail.com>
+
+ENV WORKING_DIR /dist
+ENV NODE_ENV 'production'
+
+WORKDIR $WORKING_DIR
+
+ADD ./dist $WORKING_DIR
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install curl -y
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN apt-get install -y nodejs
+
+EXPOSE 5500
+
+CMD node server.bundle.js

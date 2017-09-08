@@ -56,6 +56,9 @@ const Client = props => (
     id={props.match.params.id}
     blank={{ name: '', edrpou: '' }}
     data={props.clients.data}
+    m={props.clients.m}
+    e={props.clients.e}
+    isFetched={props.clients.isFetched}
     history={props.history}
     url="/clients"
     fetch={props.fetchClient}
@@ -67,11 +70,19 @@ const Client = props => (
   </CatalogForm>
 );
 
+Client.defaultProps = {
+  m: [],
+  e: [],
+};
+
 Client.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   clients: PropTypes.shape({
     data: PropTypes.array.isRequired,
+    m: PropTypes.array,
+    e: PropTypes.array,
+    isFetched: PropTypes.bool.isRequired,
   }).isRequired,
 
   fetchClient: PropTypes.func.isRequired,

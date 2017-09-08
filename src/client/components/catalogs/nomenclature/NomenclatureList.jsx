@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchNomenclature, deleteNomenclature } from '../../../actions/nomenclature';
+import { fetchNomenclature, changeNomenclature } from '../../../actions/nomenclature';
 
 import CatalogList from '../CatalogList';
 
@@ -17,7 +17,7 @@ const NomenclatureList = (props) => {
         isFetched={isFetched}
         history={props.history}
         fetch={props.fetchNomenclature}
-        delete={props.deleteNomenclature}
+        change={props.changeNomenclature}
       />
     </div>
   );
@@ -31,9 +31,9 @@ NomenclatureList.propTypes = {
   history: PropTypes.shape({}).isRequired,
 
   fetchNomenclature: PropTypes.func.isRequired,
-  deleteNomenclature: PropTypes.func.isRequired,
+  changeNomenclature: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   nomenclature: state.nomenclature,
-}), { fetchNomenclature, deleteNomenclature })(NomenclatureList);
+}), { fetchNomenclature, changeNomenclature })(NomenclatureList);

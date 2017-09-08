@@ -30,7 +30,7 @@ export default class Nomenclature {
     if (nomenclature) {
       return { nomenclature, messages: [] };
     }
-    return { nomenclature: {}, messages: ['No such nomenclature with this id'] };
+    return { nomenclature: {}, messages: ['Номенклатуру не знайдено'] };
   }
 
   static createNomenclature(args) {
@@ -38,7 +38,7 @@ export default class Nomenclature {
 
     const nomenclatureDb = db.get(TABLE).find({ name: args.name }).value();
     if (nomenclatureDb) {
-      return { nomenclature: {}, messages: ['Nomenclature with this name exists'] };
+      return { nomenclature: {}, messages: ['Номенклатура з таким іменем вже існує'] };
     }
 
     let nomenclature = new Nomenclature({ ...args });
@@ -49,6 +49,29 @@ export default class Nomenclature {
       return { nomenclature, messages };
     }
     return { nomenclature: {}, messages };
+  }
+
+  static createNomenclatureIfNotExist(arg) {
+    db.read();
+
+    if (!arg) {
+      return null;
+    }
+
+    let nomenclatureDb = db.get(TABLE).find({ id: arg }).value();
+    if (nomenclatureDb) {
+      return nomenclatureDb.id;
+    }
+
+    nomenclatureDb = db.get(TABLE).find({ name: arg }).value();
+    if (nomenclatureDb) {
+      return nomenclatureDb.id;
+    }
+
+    let nomenclature = new Nomenclature({ name: arg });
+    nomenclature = nomenclature.toJSON();
+    db.get(TABLE).push(nomenclature).write();
+    return nomenclature.id;
   }
 
   static changeNomenclature(id, args) {
@@ -64,14 +87,14 @@ export default class Nomenclature {
       }
       return { nomenclature: {}, messages };
     }
-    return { nomenclature: {}, messages: ['No such nomenclature with this id'] };
+    return { nomenclature: {}, messages: ['Номенклатуру не знайдено'] };
   }
 
   static removeNomenclature(id) {
     const messages = [];
     const nomenclature = Nomenclature.findById(id).value();
     if (!nomenclature) {
-      messages.push('No such nomenclature with this id');
+      messages.push('Номенклатуру не знайдено');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -82,7 +105,7 @@ export default class Nomenclature {
   validate() {
     const messages = [];
     if (!this.name) {
-      messages.push('Name is required!');
+      messages.push('Не вказана назва!');
     }
     return messages;
   }

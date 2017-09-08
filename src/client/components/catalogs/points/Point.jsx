@@ -42,6 +42,9 @@ const Point = props => (
     id={props.match.params.id}
     blank={{ name: '' }}
     data={props.points.data}
+    m={props.points.m}
+    e={props.points.e}
+    isFetched={props.points.isFetched}
     history={props.history}
     url="/points"
     fetch={props.fetchPoint}
@@ -53,11 +56,19 @@ const Point = props => (
   </CatalogForm>
 );
 
+Point.defaultProps = {
+  m: [],
+  e: [],
+};
+
 Point.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   points: PropTypes.shape({
     data: PropTypes.array.isRequired,
+    m: PropTypes.array,
+    e: PropTypes.array,
+    isFetched: PropTypes.bool.isRequired,
   }).isRequired,
 
   fetchPoint: PropTypes.func.isRequired,

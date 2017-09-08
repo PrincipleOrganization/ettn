@@ -9,7 +9,7 @@ import ScalesApi from './scales.api';
 import NomenclatureApi from './nomenclature.api';
 import LoadingBillsApi from './loadingBills.api';
 
-axios.defaults.baseURL = 'http://localhost:5500/api/v1';
+axios.defaults.baseURL = '/api/v1';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 export {

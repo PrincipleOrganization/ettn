@@ -44,10 +44,10 @@ export const fetchOneNomenclature = id => (
         throw data.messages;
       }
       return dispatch({ type: FETCH_ONE_NOMENCLATURE_SUCCESS, data });
-    } catch (e) {
+    } catch (m) {
       return dispatch({
         type: FETCH_ONE_NOMENCLATURE_ERROR,
-        e,
+        m,
       });
     }
   }

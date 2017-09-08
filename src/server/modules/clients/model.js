@@ -31,7 +31,7 @@ export default class Client {
     if (client) {
       return { client, messages: [] };
     }
-    return { client: {}, messages: ['No such client with this id'] };
+    return { client: {}, messages: ['Кліент не знайдений'] };
   }
 
   static createClient(args) {
@@ -39,7 +39,7 @@ export default class Client {
 
     const clientDb = db.get(TABLE).find({ name: args.name }).value();
     if (clientDb) {
-      return { client: {}, messages: ['Client with this name exists'] };
+      return { client: {}, messages: ['Кліент з таким іменем вже існує'] };
     }
 
     let client = new Client({ ...args });
@@ -50,6 +50,29 @@ export default class Client {
       return { client, messages };
     }
     return { client: {}, messages };
+  }
+
+  static createClientIfNotExist(arg) {
+    if (!arg) {
+      return '';
+    }
+
+    db.read();
+
+    let clientDb = db.get(TABLE).find({ id: arg }).value();
+    if (clientDb) {
+      return clientDb.id;
+    }
+
+    clientDb = db.get(TABLE).find({ name: arg }).value();
+    if (clientDb) {
+      return clientDb.id;
+    }
+
+    let client = new Client({ name: arg });
+    client = client.toJSON();
+    db.get(TABLE).push(client).write();
+    return client.id;
   }
 
   static changeClient(id, args) {
@@ -65,14 +88,14 @@ export default class Client {
       }
       return { client: {}, messages };
     }
-    return { client: {}, messages: ['No such client with this id'] };
+    return { client: {}, messages: ['Кліент не знайдений'] };
   }
 
   static removeClient(id) {
     const messages = [];
     const client = Client.findById(id).value();
     if (!client) {
-      messages.push('No such client with this id');
+      messages.push('Кліент не знайдений');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -83,10 +106,7 @@ export default class Client {
   validate() {
     const messages = [];
     if (!this.name) {
-      messages.push('Name is required!');
-    }
-    if (!this.edrpou) {
-      messages.push('EDRPOU code is required!');
+      messages.push('Не вказана назва!');
     }
     return messages;
   }

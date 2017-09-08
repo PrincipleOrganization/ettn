@@ -44,10 +44,10 @@ export const fetchClient = id => (
         throw data.messages;
       }
       return dispatch({ type: FETCH_CLIENT_SUCCESS, data });
-    } catch (e) {
+    } catch (m) {
       return dispatch({
         type: FETCH_CLIENT_ERROR,
-        e,
+        m,
       });
     }
   }

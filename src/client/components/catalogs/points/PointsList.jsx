@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchPoints, deletePoint } from '../../../actions/points';
+import { fetchPoints, changePoint } from '../../../actions/points';
 
 import CatalogList from '../CatalogList';
 
@@ -16,7 +16,7 @@ const PointsList = (props) => {
       isFetched={isFetched}
       history={props.history}
       fetch={props.fetchPoints}
-      delete={props.deletePoint}
+      change={props.changePoint}
     />
   );
 };
@@ -29,9 +29,9 @@ PointsList.propTypes = {
   history: PropTypes.shape({}).isRequired,
 
   fetchPoints: PropTypes.func.isRequired,
-  deletePoint: PropTypes.func.isRequired,
+  changePoint: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   points: state.points,
-}), { fetchPoints, deletePoint })(PointsList);
+}), { fetchPoints, changePoint })(PointsList);

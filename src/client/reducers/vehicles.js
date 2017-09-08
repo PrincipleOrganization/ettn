@@ -20,7 +20,8 @@ import { updateData } from '.';
 
 const initialState = {
   data: [],
-  e: null,
+  e: [],
+  m: [],
   isFetched: false,
 };
 
@@ -31,11 +32,15 @@ export default (state = initialState, action) => {
     case FETCH_VEHICLES:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case FETCH_VEHICLES_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
         isFetched: true,
       };
     case FETCH_VEHICLES_SUCCESS:
@@ -43,17 +48,23 @@ export default (state = initialState, action) => {
         ...state,
         data: action.data,
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // ONE
     case FETCH_VEHICLE:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case FETCH_VEHICLE_ERROR:
       return {
         ...state,
-        e: action.e,
+        m: action.m,
+        e: [],
         isFetched: true,
       };
     case FETCH_VEHICLE_SUCCESS:
@@ -61,17 +72,24 @@ export default (state = initialState, action) => {
         ...state,
         data: updateData(state.data, action.data.vehicle),
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // CREATE
     case CREATE_VEHICLE:
-      return state;
+      return {
+        ...state,
+        e: [],
+        m: [],
+        isFetched: false,
+      };
     case CREATE_VEHICLE_ERROR:
       return {
         ...state,
         isFetched: true,
         e: action.e,
-        data: state.data.filter(element => element.id !== action.data.vehicle.id),
+        m: [],
       };
     case CREATE_VEHICLE_SUCCESS:
       return {
@@ -80,17 +98,24 @@ export default (state = initialState, action) => {
           ...state.data,
           action.data.vehicle,
         ],
+        e: [],
+        m: [],
+        isFetched: true,
       };
 
     // CHANGE
     case CHANGE_VEHICLE:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case CHANGE_VEHICLE_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
         isFetched: true,
       };
     case CHANGE_VEHICLE_SUCCESS:
@@ -98,22 +123,32 @@ export default (state = initialState, action) => {
         ...state,
         data: updateData(state.data, action.data.vehicle),
         isFetched: true,
+        e: [],
+        m: [],
       };
 
     // DELETE
     case DELETE_VEHICLE:
       return {
         ...state,
+        e: [],
+        m: [],
+        isFetched: false,
       };
     case DELETE_VEHICLE_ERROR:
       return {
         ...state,
         e: action.e,
+        m: [],
+        isFetched: true,
       };
     case DELETE_VEHICLE_SUCCESS:
       return {
         ...state,
         data: state.data.filter(element => element.id !== action.id),
+        e: [],
+        m: [],
+        isFetched: true,
       };
 
     default:

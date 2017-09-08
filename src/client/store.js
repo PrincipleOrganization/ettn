@@ -6,12 +6,12 @@ import thunk from 'redux-thunk';
 
 import rootReducer from './reducers';
 
-const middlewares = [
-  createLogger(),
-  thunk,
-];
+const middlewares = [thunk];
+if (process.env.NODE_ENV === 'development') {
+  middlewares.push(createLogger());
+}
 
-export default createStore(
+const store = createStore(
   rootReducer,
   undefined,
   compose(
@@ -19,3 +19,5 @@ export default createStore(
     window.devToolsExtension ? window.devToolsExtension() : f => f,
   ),
 );
+
+export default store;

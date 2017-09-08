@@ -7,7 +7,7 @@ const db = database();
 
 const TABLE = 'vehicles';
 
-const Types = {
+export const Types = {
   TRUCK: 'truck',
   TRAILER: 'trailer',
   RAILCAR: 'railcar',
@@ -37,7 +37,7 @@ export default class Vehicle {
     if (vehicle) {
       return { vehicle, messages: [] };
     }
-    return { vehicle: {}, messages: ['No such vehicle with this id'] };
+    return { vehicle: {}, messages: ['Транспортний засіб не знайдено'] };
   }
 
   static createVehicle(args) {
@@ -45,7 +45,7 @@ export default class Vehicle {
 
     const vehicleDb = db.get(TABLE).find({ name: args.name }).value();
     if (vehicleDb) {
-      return { vehicle: {}, messages: ['Vehicle with this name exists'] };
+      return { vehicle: {}, messages: ['Транспортний засіб з такою назваою вже існує'] };
     }
 
     let vehicle = new Vehicle({ ...args });
@@ -58,10 +58,34 @@ export default class Vehicle {
     return { vehicle: {}, messages };
   }
 
+  static createVehicleIfNotExist(arg, type = Types.TRUCK) {
+    if (!arg) {
+      return '';
+    }
+
+    db.read();
+
+    let vehicleDb = db.get(TABLE).find({ id: arg }).value();
+    if (vehicleDb) {
+      return vehicleDb.id;
+    }
+
+    vehicleDb = db.get(TABLE).find({ name: arg }).value();
+    if (vehicleDb) {
+      return vehicleDb.id;
+    }
+
+    let vehicle = new Vehicle({ name: arg, type });
+    vehicle = vehicle.toJSON();
+    db.get(TABLE).push(vehicle).write();
+    return vehicle.id;
+  }
+
   static changeVehicle(id, args) {
     const vehicleDb = Vehicle.findById(id);
-    if (vehicleDb.value()) {
-      const vehicle = new Vehicle({ ...args, id });
+    let vehicle = vehicleDb.value();
+    if (vehicle) {
+      vehicle = new Vehicle({ ...args, id });
       const messages = vehicle.validate();
       if (messages.length === 0) {
         return {
@@ -71,14 +95,14 @@ export default class Vehicle {
       }
       return { vehicle: {}, messages };
     }
-    return { vehicle: {}, messages: ['No such vehicle with this id'] };
+    return { vehicle: {}, messages: ['Транспортний засіб не знайдено'] };
   }
 
   static removeVehicle(id) {
     const messages = [];
     const vehicle = Vehicle.findById(id).value();
     if (!vehicle) {
-      messages.push('No such vehicle with this id');
+      messages.push('Транспортний засіб не знайдено');
     }
     return {
       success: db.get(TABLE).remove({ id }).write().length === 1,
@@ -89,7 +113,7 @@ export default class Vehicle {
   validate() {
     const messages = [];
     if (!this.name) {
-      messages.push('Name is required!');
+      messages.push('Не вказано назву!');
     }
     return messages;
   }

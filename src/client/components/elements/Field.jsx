@@ -20,6 +20,8 @@ const Field = ({
   selector,
   table,
   onChange,
+  onClick = null,
+  onBlur = null,
 }) => {
   let input = (
     <input
@@ -36,18 +38,20 @@ const Field = ({
 
   if (datetime) {
     input = (
-      <DatetimePicker
-        readOnly={readOnly}
-        name={name}
-        value={value}
-        onChange={onChange}
-      />
+      <div onClick={onClick} onBlur={onBlur}>
+        <DatetimePicker
+          readOnly={readOnly}
+          name={name}
+          value={value}
+          onChange={onChange}
+        />
+      </div>
     );
   }
 
   let elementToRender = input;
   let modal;
-  if (selectButton && !readOnly) {
+  if (selectButton) {
     elementToRender = (
       <div className="input-group">
         {input}
@@ -77,13 +81,13 @@ const Field = ({
 
   let label;
   if (withLabel) {
-    label = (<label htmlFor={name} className="col-sm-1 control-label">{title}</label>);
+    label = (<label htmlFor={name}>{title}</label>);
   }
 
   return (
     <div>
-      {label}
-      <div className={`col-sm-${width}`}>
+      <div className={`col-sm-${width} col-xs-${width}`}>
+        {label}
         {elementToRender}
       </div>
       {modal}
