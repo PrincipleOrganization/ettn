@@ -7,8 +7,18 @@ const Icon = ({ icon, noMargin }) => {
   );
 };
 
+<<<<<<< HEAD
+Icon.defaultProps = {
+  noMargin: false,
+};
+
 Icon.propTypes = {
   icon: PropTypes.string.isRequired,
+  noMargin: PropTypes.bool,
+=======
+Icon.propTypes = {
+  icon: PropTypes.string.isRequired,
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
 };
 
 Icon.User = () => (
@@ -36,7 +46,15 @@ Icon.Check = () => (
 );
 
 Icon.Verified = () => (
+<<<<<<< HEAD
+  <Icon icon="fa-flag" />
+);
+
+Icon.Unverified = () => (
+  <Icon icon="fa-flag-o" />
+=======
   <Icon icon="fa-check" />
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
 );
 
 Icon.Save = () => (
@@ -91,4 +109,27 @@ Icon.Outcome = props => (
   <Icon {...props} icon="fa-minus" />
 );
 
+<<<<<<< HEAD
+Icon.Generate = props => (
+  <Icon {...props} icon="fa-play" />
+);
+
+Icon.Database = props => (
+  <Icon {...props} icon="fa-database" />
+);
+
+Icon.GetDB = props => (
+  <Icon {...props} icon="fa-download" />
+);
+
+Icon.SetDB = props => (
+  <Icon {...props} icon="fa-upload" />
+);
+
+Icon.ExportAsExcel = props => (
+  <Icon {...props} icon="fa-file-excel-o" />
+);
+
+=======
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
 export default Icon;

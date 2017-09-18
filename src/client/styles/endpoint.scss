@@ -241,6 +241,54 @@ body {
   width: 120px;
 }
 
+<<<<<<< HEAD
+.react-grid-Toolbar {
+  border: none !important;
+  padding-top: 5px !important;
+
+  .tools {
+    float: left !important;
+    margin-bottom: 15px !important;
+    margin-left: -15px !important;
+
+    button {
+      font-size: 12px;
+      line-height: 1.5;
+      border-radius: 3px;
+      border-color: $btn-default-border;
+      padding: 5px 10px;
+    }
+
+    .btn-report-primary {
+      margin-right: 5px;
+      background-color: $brand-primary;
+      border-color: $brand-primary;
+      color: white;
+    }
+
+    .btn-report-secondary {
+      margin-left: 5px;
+    }
+  }
+}
+
+.report-selections {
+  margin-top: 15px;
+  margin-bottom: -5px;
+}
+
+.db-setting {
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  .db-viewer {
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+}
+
+=======
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
 /*
 *
 * DATETIME PICKER

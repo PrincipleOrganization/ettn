@@ -13,12 +13,26 @@ const Settings = () => (
             Користувачі
           </Link>
         </li>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
         <li>
           <Link to="/settings/cleaner">
             <span className="settings-icon"><Icon.Remove /></span>
             Видалення елементів
           </Link>
         </li>
+<<<<<<< HEAD
+
+        <li>
+          <Link to="/settings/db">
+            <span className="settings-icon"><Icon.Database /></span>
+            База даних
+          </Link>
+        </li>
+=======
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
       </ul>
     </dev>
   </div>

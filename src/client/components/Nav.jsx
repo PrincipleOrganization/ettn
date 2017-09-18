@@ -128,7 +128,11 @@ const Nav = ({ user, logout: logoutFunc }) => {
                 <span className="caret" />
               </a>
               <ul className="dropdown-menu">
+<<<<<<< HEAD
+                <li><NavLink to="/weighings-journal">Журнал зважувань</NavLink></li>
+=======
                 <li><NavLink to="/drivers">Водії</NavLink></li>
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
               </ul>
             </li>
           </ul>

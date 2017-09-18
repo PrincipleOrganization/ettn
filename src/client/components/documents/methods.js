@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import { dialog, catalogs } from '../../utils';
+=======
 import { dialog } from '../../utils';
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
 
 export const Types = {
   INCOME: 'income',
@@ -19,4 +23,21 @@ export const deleteDialog = (context, id, marked, isList = true) => {
       }
     },
   );
+<<<<<<< HEAD
 };
+
+export const generateGoodsString = (catalog, goods) => {
+  let goodsString = '';
+  for (let i = 0; i < goods.length; i += 1) {
+    if (goods[i].nomenclature) {
+      goodsString += `${catalogs.getCatalogNameById(catalog, goods[i].nomenclature)}, `;
+    }
+  }
+  if (goodsString) {
+    goodsString = goodsString.substring(0, goodsString.length - 2);
+  }
+  return goodsString;
+};
+=======
+};
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10

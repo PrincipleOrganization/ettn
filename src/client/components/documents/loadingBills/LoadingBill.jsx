@@ -7,7 +7,11 @@ import { catalogs, format, dialog, Auth } from '../../../utils';
 import { CSS_OBJECT_HEADER, CSS_INPUT } from '../../../constants';
 
 import { Field, FormTable, Spinner, Icon } from '../../elements';
+<<<<<<< HEAD
+import { SmartScales, getMainScales } from дщфвlo'../../catalogs/scales/methods';
+=======
 import { SmartScales, getMainScales } from '../../catalogs/scales/methods';
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
 
 import { fetchUsers } from '../../../actions/users';
 import { fetchLoadingBill, createLoadingBill, changeLoadingBill } from '../../../actions/loadingBills';
@@ -173,7 +177,11 @@ const WeightField = ({
             width={2}
             onChange={onChange}
           />
+<<<<<<< HEAD
+
+=======
   
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
           <Field
             title={dateTitle}
             name={dateId}
@@ -185,7 +193,11 @@ const WeightField = ({
             datetime
             onChange={onChange}
           />
+<<<<<<< HEAD
+
+=======
   
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
           <Field
             title={titleOperator}
             name={operatorId}
@@ -248,6 +260,8 @@ class LoadingBill extends Component {
 
     const id = this.props.match.params.id;
     
+    this.url = '/loadingBills';
+
     this.url = '/loadingBills';
 
     this.params = {
@@ -383,11 +397,19 @@ class LoadingBill extends Component {
       this.params.new = false;
       this.params.reread = true;
     } else {
+<<<<<<< HEAD
+      this.params.data.verified = verified;
+      this.props.changeLoadingBill(
+        this.props.match.params.id,
+        {
+          ...this.params.data,
+=======
       this.props.changeLoadingBill(
         this.props.match.params.id, 
         { 
           ...this.params.data, 
           verified: this.params.data.verified || verified, 
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
         },
       );
     }
@@ -530,7 +552,11 @@ class LoadingBill extends Component {
 
     const userIsAdmin = Auth.userIsAdmin();
 
+<<<<<<< HEAD
+    const isFetched = this.props.loadingBills.isFetched
+=======
     const isFetched = this.props.loadingBills.isFetched 
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
       && this.props.scales.isFetched
       && this.props.nomenclature.isFetched
       && this.props.clients.isFetched
@@ -679,8 +705,31 @@ class LoadingBill extends Component {
               <span className="caret" />
             </button>
             <ul className="dropdown-menu">
+<<<<<<< HEAD
+              <li>
+                <a
+                  role="button"
+                  className={this.params.new ? 'disabled' : ''}
+                  onClick={() => { deleteDialog(this, mark, false); }}
+                >
+                  <Icon.Remove />
+                  Видалити
+                </a>
+              </li>
+              {rereadButton}
+              <li>
+                <a
+                  role="button"
+                  onClick={() => { this.handleSave(false, false); }}
+                >
+                  <Icon.Unverified />
+                  Відмінити підтвердження
+                </a>
+              </li>
+=======
               <li><a role="button" className={this.params.new ? 'disabled' : ''} onClick={() => { deleteDialog(this, mark, false); }}><Icon.Remove />Видалити</a></li>
               {rereadButton}
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
             </ul>
           </div>
 
@@ -1027,11 +1076,19 @@ class LoadingBill extends Component {
         </div>
       );
 
+<<<<<<< HEAD
+      let icon = <Icon.Unverified />;
+      if (mark) {
+        icon = <Icon.MarkToRemove />;
+      } else if (verified) {
+        icon = <Icon.Verified />;
+=======
       let icon = null;
       if (mark) {
         icon = <Icon.MarkToRemove />;
       } else if (verified) {
         icon = (<Icon.Check />);
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
       }
 
       elementToRender = (

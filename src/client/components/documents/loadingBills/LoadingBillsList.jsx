@@ -16,6 +16,77 @@ import { fetchNomenclature } from '../../../actions/nomenclature';
 
 import { Icon, Spinner, ListToolbar, SearchPanel } from '../../elements';
 
+<<<<<<< HEAD
+import { Types, deleteDialog, generateGoodsString } from '../methods';
+
+const FastView = ({ data, handleOpen, handleDelete }) => (
+  <form className="fast-view form-horizontal">
+    <div className="btn-toolbar object-toolbar clearfix" role="toolbar">
+      <div className="btn-group btn-group-sm pull-left" role="group">
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={handleOpen}
+        >
+          <Icon.Open />
+          Змінити
+        </button>
+        <button
+          type="button"
+          className="btn btn-default"
+          onClick={handleDelete}
+        >
+          <Icon.Remove />
+          Видалити
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <div className="row">
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Перевізник: </strong>{data.carrier}
+        </div>
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Замовник: </strong>{data.customer}
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Відправник: </strong>{data.sender}
+        </div>
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Отримувач: </strong>{data.recipient}
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Причеп: </strong>{data.trailer}
+        </div>
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Пункт погрузки: </strong>{data.point}
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Номенклатура: </strong>{data.goods}
+        </div>
+        <div className="fast-view-field col-xs-12 col-sm-6">
+          <strong>Автор: </strong>{data.author}
+        </div>
+      </div>
+    </div>
+  </form>
+);
+
+FastView.propTypes = {
+  data: PropTypes.shape({}).isRequired,
+  handleOpen: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+=======
 import { Types, deleteDialog } from '../methods';
 
 const generateGoodsString = (catalog, goods) => {
@@ -29,6 +100,7 @@ const generateGoodsString = (catalog, goods) => {
     goodsString = goodsString.substring(0, goodsString.length - 2);
   }
   return goodsString;
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
 };
 
 const FastView = ({ data, handleOpen, handleDelete }) => (
@@ -142,7 +214,30 @@ class LoadingBillsList extends Component {
     if (id) {
       const value = catalogs.getCatalogValueById(this.props.loadingBills.data, id);
       this.props.changeLoadingBill(id, { ...value, mark: !mark, verified: false });
+<<<<<<< HEAD
     }
+  }
+
+  handleMarkToRemove(id) {
+    const { mark } = catalogs.getCatalogValueById(this.props.loadingBills.data, id);
+    if (id) {
+      deleteDialog(this, id, mark, true);
+    }
+  }
+
+  handleType(type) {
+    let typeSelector = type;
+    const currentTypeSelector = this.state.typeSelector;
+    if (currentTypeSelector === typeSelector) {
+      typeSelector = null;
+=======
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
+    }
+    this.setState({ typeSelector });
+  }
+
+  toggleFilters() {
+    this.setState({ showFilters: !this.state.showFilters });
   }
 
   handleMarkToRemove(id) {
@@ -189,7 +284,11 @@ class LoadingBillsList extends Component {
       for (let i = 0; i < data.length; i += 1) {
         const item = data[i];
 
+<<<<<<< HEAD
+        let icon = (item.verified) ? Icon.Verified : Icon.Unverified;
+=======
         let icon = (item.verified) ? Icon.Check : null;
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
         icon = (item.mark) ? Icon.MarkToRemove : (icon);
 
         if (this.state.typeSelector) {
@@ -269,6 +368,7 @@ class LoadingBillsList extends Component {
               type="button"
               className={`btn btn-default loading-bill-type-selector ${this.state.typeSelector === Types.INCOME ? 'active' : ''}`}
               onClick={() => this.handleType(Types.INCOME)}
+<<<<<<< HEAD
             >
               Прихід
             </button>
@@ -277,6 +377,16 @@ class LoadingBillsList extends Component {
               className={`btn btn-default loading-bill-type-selector ${this.state.typeSelector === Types.OUTCOME ? 'active' : ''}`}
               onClick={() => this.handleType(Types.OUTCOME)}
             >
+=======
+            >
+              Прихід
+            </button>
+            <button
+              type="button"
+              className={`btn btn-default loading-bill-type-selector ${this.state.typeSelector === Types.OUTCOME ? 'active' : ''}`}
+              onClick={() => this.handleType(Types.OUTCOME)}
+            >
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
               Відвантаження
             </button>
           </div>

@@ -15,10 +15,6 @@ class CatalogSelectModal extends Component {
     this.selectItem = this.selectItem.bind(this);
   }
 
-  componentDidMount() {
-    this.props.fetch();
-  }
-
   handleClick(activeRow) {
     this.setState({ activeRow });
   }
@@ -116,8 +112,11 @@ CatalogSelectModal.propTypes = {
   })).isRequired,
   isFetched: PropTypes.bool.isRequired,
   pick: PropTypes.shape({}),
+<<<<<<< HEAD
+=======
 
   fetch: PropTypes.func.isRequired,
+>>>>>>> 7283fdfa370d4d407c3eaed6cae66ba0b307df10
   select: PropTypes.func.isRequired,
 };
 
