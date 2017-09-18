@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import CatalogSelectModal from '../CatalogSelectModal';
 
-import { fetchPoints } from '../../../actions/points';
-
 const PointsSelect = props => (
   <div>
     <CatalogSelectModal
@@ -14,7 +12,6 @@ const PointsSelect = props => (
       name={props.name}
       data={props.points.data}
       isFetched={props.points.isFetched}
-      fetch={props.fetchPoints}
       select={props.select}
     />
   </div>
@@ -27,11 +24,9 @@ PointsSelect.propTypes = {
     data: PropTypes.array.isRequired,
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
-
-  fetchPoints: PropTypes.func.isRequired,
   select: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   points: state.points,
-}), { fetchPoints })(PointsSelect);
+}))(PointsSelect);

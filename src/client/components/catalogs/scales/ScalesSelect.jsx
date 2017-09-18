@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import CatalogSelectModal from '../CatalogSelectModal';
 
-import { fetchScales } from '../../../actions/scales';
-
 const ScalesSelect = props => (
   <div>
     <CatalogSelectModal
@@ -14,7 +12,6 @@ const ScalesSelect = props => (
       name={props.name}
       data={props.scales.data}
       isFetched={props.scales.isFetched}
-      fetch={props.fetchScales}
       select={props.select}
     />
   </div>
@@ -27,11 +24,9 @@ ScalesSelect.propTypes = {
     data: PropTypes.array.isRequired,
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
-
-  fetchScales: PropTypes.func.isRequired,
   select: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   scales: state.scales,
-}), { fetchScales })(ScalesSelect);
+}))(ScalesSelect);

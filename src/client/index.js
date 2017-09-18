@@ -12,7 +12,7 @@ import '../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.
 
 import store from './store';
 
-import { Base } from './containers';
+import Base from './components/Base';
 
 ReactDOM.render(
   <Provider store={store}>

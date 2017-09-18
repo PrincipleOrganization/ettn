@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import CatalogSelectModal from '../CatalogSelectModal';
 
-import { fetchDrivers } from '../../../actions/drivers';
-
 const DriversSelect = props => (
   <div>
     <CatalogSelectModal
@@ -14,7 +12,6 @@ const DriversSelect = props => (
       name={props.name}
       data={props.drivers.data}
       isFetched={props.drivers.isFetched}
-      fetch={props.fetchDrivers}
       select={props.select}  
     />
   </div>
@@ -27,11 +24,9 @@ DriversSelect.propTypes = {
     data: PropTypes.array.isRequired,
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
-
-  fetchDrivers: PropTypes.func.isRequired,
   select: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   drivers: state.drivers,
-}), { fetchDrivers })(DriversSelect);
+}))(DriversSelect);

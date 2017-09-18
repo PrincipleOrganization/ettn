@@ -6,6 +6,7 @@ import driver from './drivers/routes';
 import vehicle from './vehicles/routes';
 import scale from './scales/routes';
 import loadingBill from './loadingBills/routes';
+import db from './db/routes';
 
 export default (app) => {
   app.use('/api/v1/user', users);
@@ -16,4 +17,5 @@ export default (app) => {
   app.use('/api/v1/vehicle', vehicle);
   app.use('/api/v1/scale', scale);
   app.use('/api/v1/loadingBill', loadingBill);
+  app.use('/api/v1/db', db);
 };

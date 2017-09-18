@@ -8,6 +8,7 @@ import VehiclesApi from './vehicles.api';
 import ScalesApi from './scales.api';
 import NomenclatureApi from './nomenclature.api';
 import LoadingBillsApi from './loadingBills.api';
+import Db from './db.api';
 
 axios.defaults.baseURL = '/api/v1';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -21,4 +22,5 @@ export {
   ScalesApi,
   NomenclatureApi,
   LoadingBillsApi,
+  Db,
 };

@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import CatalogSelectModal from '../CatalogSelectModal';
 
-import { fetchClients } from '../../../actions/clients';
-
 const ClientsSelect = props => (
   <div>
     <CatalogSelectModal
@@ -14,7 +12,6 @@ const ClientsSelect = props => (
       name={props.name}
       data={props.clients.data}
       isFetched={props.clients.isFetched}
-      fetch={props.fetchClients}
       select={props.select}
     />
   </div>
@@ -27,11 +24,9 @@ ClientsSelect.propTypes = {
     data: PropTypes.array.isRequired,
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
-
-  fetchClients: PropTypes.func.isRequired,
   select: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   clients: state.clients,
-}), { fetchClients })(ClientsSelect);
+}))(ClientsSelect);

@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import CatalogSelectModal from '../CatalogSelectModal';
 
-import { fetchNomenclature } from '../../../actions/nomenclature';
-
 const NomenclatureSelect = props => (
   <div>
     <CatalogSelectModal
@@ -14,7 +12,6 @@ const NomenclatureSelect = props => (
       name={props.name}
       data={props.nomenclature.data}
       isFetched={props.nomenclature.isFetched}
-      fetch={props.fetchNomenclature}  
       select={props.select}
     />
   </div>
@@ -27,11 +24,9 @@ NomenclatureSelect.propTypes = {
     data: PropTypes.array.isRequired,
     isFetched: PropTypes.bool.isRequired,
   }).isRequired,
-
-  fetchNomenclature: PropTypes.func.isRequired,
   select: PropTypes.func.isRequired,
 };
 
 export default connect(state => ({
   nomenclature: state.nomenclature,
-}), { fetchNomenclature })(NomenclatureSelect);
+}))(NomenclatureSelect);

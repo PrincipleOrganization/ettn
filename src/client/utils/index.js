@@ -11,6 +11,7 @@ import {
   ScalesApi,
   NomenclatureApi,
   LoadingBillsApi,
+  Db,
 } from './api';
 
 export {
@@ -26,4 +27,5 @@ export {
   ScalesApi,
   NomenclatureApi,
   LoadingBillsApi,
+  Db,
 };
